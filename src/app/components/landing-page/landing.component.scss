@@ -1,0 +1,64 @@
+// app/components/landing/landing.component.scss
+
+.main-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  font-family: "Fira Sans", serif;
+  font-weight: 700;
+  font-style: normal;
+  height: 100vh;
+}
+
+.title {
+  text-align: center;
+  color: #251d2a;
+
+  h1 {
+    font-size: 7em;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    font-family: "Fira Sans", serif;
+    font-weight: 300;
+    font-style: normal;
+  }
+
+  .button-group {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+  }
+
+  button {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &.btn-primary {
+      background-color: #251d2a;
+      border: none;
+      color: white;
+
+      &:hover {
+        background-color: #7c3aed;
+      }
+    }
+
+    &.btn-secondary {
+      background-color: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+}

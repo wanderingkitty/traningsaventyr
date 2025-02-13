@@ -1,12 +1,12 @@
+// app/app.component.ts
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterModule } from '@angular/router';
+import { LandingComponent } from './components/landing-page/landing.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  template: '<app-landing></app-landing>',
+  standalone: true,
+  imports: [RouterModule, LandingComponent],
 })
-export class AppComponent {
-  title = 'traningsaventyr';
-}
+export class AppComponent {}
