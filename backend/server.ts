@@ -11,7 +11,7 @@ dotenv.config();
 
 const app = express();
 const angularApp = new AngularNodeAppEngine();
-const port: number = Number(process.env['PORT']) || 4444;
+const port = 3000;
 
 app.use('/', express.static('dist/'));
 

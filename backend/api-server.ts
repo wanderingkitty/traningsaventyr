@@ -2,11 +2,20 @@ import express, { Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
 import { connect } from './data/dbConnection';
 import { userRouter } from './routes/userRoute';
+import cors from 'cors';
 
 dotenv.config();
 
 const app = express();
-const port = Number(process.env['PORT']) || 1408;
+const port = Number(process.env['PORT']) || 4444;
+
+app.use(
+  cors({
+    origin: 'http://localhost:4200', // Allow only frontend
+    methods: 'GET,POST,PUT,DELETE',
+    allowedHeaders: 'Content-Type,Authorization',
+  })
+);
 
 // Middleware
 app.use(express.json());

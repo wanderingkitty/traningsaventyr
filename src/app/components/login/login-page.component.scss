@@ -1,0 +1,104 @@
+.login-table {
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("../../../assets/3497902.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    filter: brightness(0.5);
+    z-index: -1;
+  }
+}
+
+.login-block {
+  font-family: "Fira Sans", serif;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  width: 400px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(53, 55, 58, 0.288);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  z-index: 1;
+  text-align: center;
+}
+
+h1 {
+  color: #ffffff;
+  font-weight: 800;
+  font-style: normal;
+}
+
+span {
+  color: #ffffff;
+  font-weight: 200;
+}
+
+.login-block input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 4px;
+  border: none;
+  background-color: #eaeaea;
+  outline: none;
+}
+
+.sign-in {
+  background-color: #201825;
+  color: #ffffff;
+  font-weight: 500;
+  border: none;
+  border-radius: 4px;
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 768px) {
+  .login-block {
+    padding: 15px;
+    width: 85%;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .login-block {
+    padding: 10px;
+    width: 95%;
+  }
+
+  .login-block input {
+    padding: 8px;
+    margin: 8px 0;
+  }
+}
+
+// Для очень маленьких экранов
+@media screen and (max-height: 500px) {
+  .login-block {
+    position: relative;
+    transform: none;
+    top: 20px;
+    left: 0;
+    margin: 20px auto;
+  }
+}

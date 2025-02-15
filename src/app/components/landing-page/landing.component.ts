@@ -10,12 +10,11 @@ import { Router, RouterModule } from '@angular/router';
   imports: [RouterModule],
 })
 export class LandingComponent {
-  constructor(private router: Router) {
-    console.log('LandingComponent initialized');
-  }
+  constructor(private router: Router) {}
 
   getStarted() {
-    this.router.navigate(['/register']);
+    console.log('getStarted clicked');
+    this.router.navigate(['/login']);
   }
 
   learnMore() {

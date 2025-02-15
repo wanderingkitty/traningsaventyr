@@ -24,6 +24,7 @@
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
+              "src/assets",
               {
                 "glob": "**/*",
                 "input": "public"
@@ -71,10 +72,13 @@
               "buildTarget": "traningsaventyr:build:development"
             }
           },
-          "defaultConfiguration": "development"
-        },
-        "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n"
+          "defaultConfiguration": "development",
+          "options": {
+            "hmr": true,
+            "liveReload": true,
+            "watch": true,
+            "poll": 2000
+          }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",

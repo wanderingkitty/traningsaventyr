@@ -1,12 +1,10 @@
-// app/app.component.ts
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { LandingComponent } from './components/landing-page/landing.component';
+import { RouterModule, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  template: '<app-landing></app-landing>',
+  template: '<router-outlet></router-outlet>',
   standalone: true,
-  imports: [RouterModule, LandingComponent],
+  imports: [RouterModule, RouterOutlet],
 })
 export class AppComponent {}

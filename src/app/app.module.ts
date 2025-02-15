@@ -5,7 +5,8 @@ import { RouterModule } from '@angular/router';
 import { routes } from './app.routes';
 import { AppComponent } from './app.component';
 import { LandingComponent } from './components/landing-page/landing.component';
-import { HttpClientModule } from '@angular/common/http';
+import { LoginPageComponent } from './components/login/login-page.component';
+import { CharacterCreationComponent } from './components/characters/character-creation.component';
 
 @NgModule({
   imports: [
@@ -13,7 +14,8 @@ import { HttpClientModule } from '@angular/common/http';
     RouterModule.forRoot(routes),
     AppComponent,
     LandingComponent,
-    HttpClientModule,
+    LoginPageComponent,
+    CharacterCreationComponent,
   ],
   providers: [],
 })

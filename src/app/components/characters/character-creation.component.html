@@ -1,0 +1,46 @@
+<div class="character-creation">
+  <!-- Character Preview -->
+  <div class="character-preview" *ngIf="selectedCharacter">
+    <h2>{{ selectedCharacter.name }}</h2>
+    <img
+      [src]="selectedCharacter.avatar"
+      alt="Character Avatar"
+      class="character-avatar"
+    />
+
+    <div
+      class="special-abilities"
+      *ngIf="selectedCharacter.specialAbilities?.length"
+    >
+      <h3>Special Abilities:</h3>
+      <ul>
+        <li *ngFor="let ability of selectedCharacter.specialAbilities">
+          {{ ability.name }}
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>Choose your class</h2>
+  <div class="class-selection">
+    <div class="class-cards">
+      <button
+        *ngFor="let character of characters"
+        class="character-button"
+        [class.selected]="character === selectedCharacter"
+        (click)="selectCharacter(character)"
+      >
+        <img [src]="character.avatar" alt="{{ character.name }}" />
+        <h3>{{ character.name }}</h3>
+      </button>
+    </div>
+  </div>
+
+  <button
+    class="continue-button"
+    (click)="continue()"
+    [disabled]="!selectedCharacter"
+  >
+    Continue
+  </button>
+</div>

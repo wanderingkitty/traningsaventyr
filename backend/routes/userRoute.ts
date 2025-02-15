@@ -20,6 +20,7 @@ userRouter.get('/', async (req, res) => {
 
 // POST create user
 userRouter.post('/login', async (req, res) => {
+  console.log('Received login request:', req.body);
   const { username, password } = req.body;
 
   if (!username || !password) {
