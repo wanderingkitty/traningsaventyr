@@ -109,6 +109,11 @@
     box-shadow: 0px 0px 15px rgba(120, 100, 180, 0.4);
   }
 
+  &:active {
+    transform: scale(0.97);
+    box-shadow: 0px 0px 5px rgba(120, 100, 180, 0.5);
+  }
+
   &:disabled {
     background: #3a2b4e;
     color: rgba(255, 255, 255, 0.5);

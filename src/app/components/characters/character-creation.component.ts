@@ -78,8 +78,9 @@ export class CharacterCreationComponent {
         },
       ],
       specialAbilities: [
-        { name: 'Speed Burst', unlockedAtLevel: 5, unlocked: false },
-        { name: 'Marathon Mind', unlockedAtLevel: 10, unlocked: false },
+        { name: '⚡ Speed Burst', unlockedAtLevel: 5, unlocked: false },
+        { name: '🔋 Marathon Mind', unlockedAtLevel: 10, unlocked: false },
+        { name: '💨 Recovery master', unlockedAtLevel: 10, unlocked: false },
       ],
     },
     {
@@ -112,8 +113,9 @@ export class CharacterCreationComponent {
         },
       ],
       specialAbilities: [
-        { name: 'Balance Sage', unlockedAtLevel: 5, unlocked: false },
-        { name: 'Inner Peace', unlockedAtLevel: 10, unlocked: false },
+        { name: '☯️ Balance Sage', unlockedAtLevel: 5, unlocked: false },
+        { name: '🌸 Inner Peace', unlockedAtLevel: 10, unlocked: false },
+        { name: '🌊 Breath guide', unlockedAtLevel: 10, unlocked: false },
       ],
     },
   ];
