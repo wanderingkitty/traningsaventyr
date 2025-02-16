@@ -6,7 +6,8 @@ import { routes } from './app.routes';
 import { AppComponent } from './app.component';
 import { LandingComponent } from './components/landing-page/landing.component';
 import { LoginPageComponent } from './components/login/login-page.component';
-import { CharacterCreationComponent } from './components/characters/character-creation.component';
+import { CharacterCreationComponent } from './components/character-creation/character-creation.component';
+import { CharacterProfileComponent } from './components/profile/character-profile.component';
 
 @NgModule({
   imports: [
@@ -16,6 +17,7 @@ import { CharacterCreationComponent } from './components/characters/character-cr
     LandingComponent,
     LoginPageComponent,
     CharacterCreationComponent,
+    CharacterProfileComponent,
   ],
   providers: [],
 })

@@ -1,0 +1,76 @@
+<div *ngIf="character" class="character-profile">
+  <h1 class="profile-title">
+    Character profile/<span class="nickname">{{
+      user?.name || "Unknown"
+    }}</span>
+  </h1>
+  <button class="logout-btn" (click)="onLogout()">LOGOUT</button>
+
+  <div class="character-card">
+    <h2>{{ character.name }}</h2>
+    <div class="avatar-container">
+      <img
+        [src]="character.avatar"
+        alt="{{ character.name }}"
+        class="character-avatar"
+      />
+    </div>
+    <p class="character-level">Level {{ character.level }} climber</p>
+    <div class="progress-bar">
+      <div
+        class="progress-bar-inner"
+        [style.width.%]="(character.xp / 1000) * 100"
+      ></div>
+    </div>
+    <h3>🏆 Achievements</h3>
+    <li *ngFor="let achievement of character.achievements">
+      <span class="achievement-name">{{ achievement.name }}</span>
+      <p class="achievement-description">{{ achievement.description }}</p>
+      <div class="progress-bar">
+        <div
+          class="progress-bar-inner"
+          [style.width.%]="achievement.progress"
+        ></div>
+      </div>
+    </li>
+  </div>
+
+  <div class="right-content">
+    <div class="card challenges-card">
+      <h3>🎯 Challenges</h3>
+      <p>{{ character.challenges[0].description }}</p>
+      <span class="challenge-unlock"
+        >Unlock: {{ character.challenges[0].unlocks }}</span
+      >
+      <div class="progress-bar">
+        <div
+          class="progress-bar-inner"
+          [style.width.%]="character.challenges[0].progress"
+        ></div>
+      </div>
+    </div>
+
+    <div class="card abilities-card">
+      <h3>✨ Special Abilities</h3>
+      <ul class="abilities-list">
+        <li *ngFor="let ability of character.specialAbilities">
+          <span class="ability-name">{{ ability.name }}</span>
+          <div class="progress-bar">
+            <div
+              class="progress-bar-inner"
+              [style.width.%]="ability.unlocked ? 100 : 0"
+            ></div>
+          </div>
+          <span class="locked" *ngIf="!ability.unlocked">LOCKED</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="action-buttons">
+    <button class="btn btn-primary">Start Workout</button>
+    <button class="btn btn-secondary" (click)="goBack()">
+      Start New Journey
+    </button>
+  </div>
+</div>

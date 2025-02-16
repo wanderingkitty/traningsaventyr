@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Character } from 'backend/models/character';
-import { CharacterProfileComponent } from './character-profile.component';
+import { CharacterProfileComponent } from '../profile/character-profile.component';
 
 @Component({
   selector: 'character-creation-page',
@@ -20,17 +20,17 @@ export class CharacterCreationComponent {
       avatar: '/assets/ascender-img.jpg',
       achievements: [
         {
-          name: 'Grip Strength',
+          name: '🦾 Grip Strength',
           description: 'Master your grip power.',
           progress: 0,
         },
         {
-          name: 'Route Master',
+          name: '🧭 Route Master',
           description: 'Conquer different routes.',
           progress: 0,
         },
         {
-          name: 'Problem Solver',
+          name: '🧩 Problem Solver',
           description: 'Find solutions for routes.',
           progress: 0,
         },
@@ -120,14 +120,7 @@ export class CharacterCreationComponent {
     },
   ];
 
-  // selectedCharacter: Character = this.characters[0];
-  selectedCharacter?: Character; // Initialize as undefined
-
-  ngOnInit() {
-    if (this.characters && this.characters.length > 0) {
-      this.selectedCharacter = this.characters[0]; // Set default character safely
-    }
-  }
+  selectedCharacter: Character = this.characters[0];
 
   constructor(private router: Router) {}
 
@@ -136,8 +129,9 @@ export class CharacterCreationComponent {
   }
 
   continue() {
-    console.log('Selected Character:', this.selectedCharacter);
-    // Navigate to the next step
-    this.router.navigate(['/game-start']);
+    console.log('Navigating with character:', this.selectedCharacter);
+    this.router.navigate(['/character-profile'], {
+      state: { character: this.selectedCharacter },
+    });
   }
 }
