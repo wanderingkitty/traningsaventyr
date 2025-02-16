@@ -14,6 +14,13 @@
   font-size: 24px;
   font-weight: 600;
   color: #e0d6f5;
+  margin-bottom: 0;
+}
+.header {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
 }
 
@@ -66,6 +73,10 @@ li {
   list-style: none;
 }
 
+.locked {
+  color: #89919e !important;
+}
+
 .avatar-container {
   width: 140px;
   height: 140px;
@@ -115,7 +126,7 @@ li {
 }
 
 .card {
-  background: rgba(255, 255, 255, 0.1);
+  background: #c4c4c4;
   border-radius: 12px;
   padding: 15px;
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15);
@@ -149,7 +160,7 @@ li {
 }
 
 .challenges-card .challenge-unlock {
-  color: rgba(255, 255, 255, 0.6);
+  color: #89919e;
   font-size: 14px;
 }
 
@@ -163,7 +174,6 @@ li {
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  background: rgba(255, 255, 255, 0.08);
   border-radius: 8px;
   padding: 10px;
   margin-bottom: 6px;
@@ -210,6 +220,8 @@ li {
   color: #ffffff;
   font-weight: 800;
   padding: 3px;
+  width: 100px;
+  align-items: end;
   &:hover {
     background: rgba(255, 255, 255, 0.2);
     transform: scale(1.05);

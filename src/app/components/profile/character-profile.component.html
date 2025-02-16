@@ -1,10 +1,12 @@
 <div *ngIf="character" class="character-profile">
-  <h1 class="profile-title">
-    Character profile/<span class="nickname">{{
-      user?.name || "Unknown"
-    }}</span>
-  </h1>
-  <button class="logout-btn" (click)="onLogout()">LOGOUT</button>
+  <div class="header">
+    <h1 class="profile-title">
+      Character profile/<span class="nickname">{{
+        (user$ | async)?.name || "Unknown"
+      }}</span>
+    </h1>
+    <button class="logout-btn" (click)="onLogout()">LOGOUT</button>
+  </div>
 
   <div class="character-card">
     <h2>{{ character.name }}</h2>
@@ -15,7 +17,9 @@
         class="character-avatar"
       />
     </div>
-    <p class="character-level">Level {{ character.level }} climber</p>
+    <p class="character-level">
+      Level {{ character.level }} {{ character.name }}
+    </p>
     <div class="progress-bar">
       <div
         class="progress-bar-inner"

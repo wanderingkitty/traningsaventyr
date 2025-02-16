@@ -39,7 +39,7 @@ export class CharacterCreationComponent {
         {
           description: 'Complete 5 climbing sessions',
           progress: 0,
-          unlocks: 'Peak Power',
+          unlocks: '🏔 Peak Power',
         },
       ],
       specialAbilities: [
@@ -55,17 +55,17 @@ export class CharacterCreationComponent {
       avatar: '/assets/running-avatar.jpg',
       achievements: [
         {
-          name: 'Distance Goals',
+          name: '🗾 Distance Goals',
           description: 'Reach new horizons.',
           progress: 0,
         },
         {
-          name: 'Pace Master',
+          name: '📈 Pace Master',
           description: 'Maintain steady speed.',
           progress: 0,
         },
         {
-          name: 'Interval Training',
+          name: '⏱️ Interval Training',
           description: 'Master speed variation.',
           progress: 0,
         },
@@ -74,7 +74,7 @@ export class CharacterCreationComponent {
         {
           description: 'Run 3 different routes',
           progress: 0,
-          unlocks: 'Speed Burst',
+          unlocks: '⚡ Speed Burst',
         },
       ],
       specialAbilities: [
@@ -90,17 +90,17 @@ export class CharacterCreationComponent {
       avatar: '/assets/yoga-avatar.jpg',
       achievements: [
         {
-          name: 'Perfect Form',
+          name: '✨ Perfect Form',
           description: 'Focus on alignment.',
           progress: 0,
         },
         {
-          name: 'Mind Master',
+          name: '🧘 Mind Master',
           description: 'Develop inner calm.',
           progress: 0,
         },
         {
-          name: 'Breath Guide',
+          name: '🍃 Breath Guide',
           description: 'Control your breath.',
           progress: 0,
         },
@@ -109,7 +109,7 @@ export class CharacterCreationComponent {
         {
           description: 'Hold a pose for 1 min',
           progress: 0,
-          unlocks: 'Balance Sage',
+          unlocks: '☯️ Balance Sage',
         },
       ],
       specialAbilities: [
