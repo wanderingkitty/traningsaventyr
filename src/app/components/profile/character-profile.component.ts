@@ -6,7 +6,7 @@ import { User } from 'backend/models/user';
 import { AuthService } from '../services/auth.service';
 
 @Component({
-  selector: 'app-character-profile',
+  selector: 'character-profile',
   templateUrl: './character-profile.component.html',
   styleUrls: ['./character-profile.component.scss'],
   standalone: true,
@@ -54,5 +54,9 @@ export class CharacterProfileComponent implements OnInit {
 
   onLogout() {
     this.authService.logout();
+  }
+
+  startWorkout() {
+    this.router.navigate(['/workout-page']);
   }
 }

@@ -1,0 +1,109 @@
+.workout-table {
+  gap: 20px;
+  align-items: start;
+  background: linear-gradient(135deg, #1e1724, #3b2d4a);
+  min-height: 100vh;
+  padding: 40px;
+  font-family: "Fira Sans", sans-serif;
+  font-weight: 400;
+  color: #ffffff;
+}
+
+.headers {
+  background: rgba(8, 6, 9, 0.3);
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.workout-title {
+  color: #89919e;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 1em;
+}
+
+.workout-btn {
+  font-family: "Fira Sans", sans-serif;
+  font-weight: 600;
+  font-size: 1em;
+  cursor: pointer;
+  margin-top: 1em;
+  border-radius: 5px;
+  border: none;
+  padding: 10px;
+}
+
+span {
+  color: #89919e;
+  font-weight: 200;
+}
+
+.workout-description {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+h2,
+h3 {
+  text-align: center;
+  margin-top: 0.5em;
+}
+
+.workout-challanges {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  margin: 1em;
+}
+
+.workout-challanges span {
+  text-align: left;
+  width: 100%;
+}
+
+.exercises-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  margin: 0.3em 2em;
+  padding: 20px;
+  background: rgba(8, 6, 9, 0.3);
+  border-radius: 10px;
+  height: 100px;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.progress-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-info h2 {
+  margin-bottom: 0.5em;
+}
+
+.progress {
+  justify-content: center;
+  align-items: flex-start;
+  border-radius: 10px;
+  margin: 0.3em 2em;
+  padding: 20px;
+  background: rgba(8, 6, 9, 0.3);
+  font-weight: 500;
+  font-size: 1.3em;
+  width: 200px;
+}

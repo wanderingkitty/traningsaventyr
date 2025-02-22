@@ -1,0 +1,49 @@
+<div class="workout-table">
+  <div class="headers">
+    <h1 class="workout-title">Workout time:</h1>
+    <h1>{{ formatTime(currentTime) }}</h1>
+  </div>
+  <h2>Today's workout</h2>
+  <span class="workout-description"
+    >Test your skills with different climbing puzzles. No pressure - try what
+    feels right for you!</span
+  >
+  <div class="workout-challanges">
+    <div *ngFor="let exercise of workouts[0].exercises">
+      <div class="exercises-list">
+        <h2>{{ exercise.name }}</h2>
+        <span> {{ exercise.description }}</span>
+        <span> {{ exercise.xpReward }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="achievements-challanges">
+    <h3>Achievement Focus</h3>
+    <div class="workout-challanges">
+      <div *ngFor="let achievement of workouts[0].achievements">
+        <div class="exercises-list">
+          <h2>{{ achievement.name }}</h2>
+          <span> {{ achievement.description }} </span>
+          <span> {{ achievement.progress }} </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="progress-info">
+    <h2>Progress</h2>
+    <div class="progress">
+      Routes completed: {{ workouts[0].progress.routesCompleted }}
+    </div>
+    <div class="progress">
+      Total XP gained: {{ workouts[0].progress.totalXpGained }}
+    </div>
+  </div>
+  <div class="buttons">
+    <button class="workout-btn" (click)="startTimer()">Start</button>
+
+    <button class="workout-btn" (click)="pauseTimer()">PAUSE</button>
+    <button class="workout-btn" (click)="stopTimer(); completeWorkout()">
+      Complete workout
+    </button>
+  </div>
+</div>

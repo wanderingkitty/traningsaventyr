@@ -3,11 +3,11 @@
   flex-direction: column;
   align-items: center;
   background: linear-gradient(135deg, #251d2a, #473950);
-  min-height: 100vh;
   padding: 20px;
   font-family: "Fira Sans", serif;
   font-weight: 400;
   color: #ffffff;
+  min-height: 100vh;
 }
 
 .character-preview {
@@ -58,7 +58,7 @@
   padding: 10px;
   border-radius: 10px;
   border: none;
-  height: 230px;
+  height: 130px;
   width: 100%;
   background-color: #251d2a;
   transition: all 0.2s ease-in-out;

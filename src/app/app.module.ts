@@ -8,6 +8,7 @@ import { LandingComponent } from './components/landing-page/landing.component';
 import { LoginPageComponent } from './components/login/login-page.component';
 import { CharacterCreationComponent } from './components/character-creation/character-creation.component';
 import { CharacterProfileComponent } from './components/profile/character-profile.component';
+import { WorkoutComponent } from './components/workouts/workout-logging.component';
 
 @NgModule({
   imports: [
@@ -18,6 +19,7 @@ import { CharacterProfileComponent } from './components/profile/character-profil
     LoginPageComponent,
     CharacterCreationComponent,
     CharacterProfileComponent,
+    WorkoutComponent,
   ],
   providers: [],
 })
