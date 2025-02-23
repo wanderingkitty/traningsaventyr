@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Character } from 'backend/models/character';
 import { CharacterProfileComponent } from '../profile/character-profile.component';
+import { CharacterService } from '../services/character.service';
 
 @Component({
   selector: 'character-creation-page',
@@ -12,6 +13,11 @@ import { CharacterProfileComponent } from '../profile/character-profile.componen
   imports: [CommonModule],
 })
 export class CharacterCreationComponent {
+  constructor(
+    private router: Router,
+    private characterService: CharacterService
+  ) {}
+
   characters: Character[] = [
     {
       name: 'Ascender',
@@ -122,16 +128,21 @@ export class CharacterCreationComponent {
 
   selectedCharacter: Character = this.characters[0];
 
-  constructor(private router: Router) {}
-
   selectCharacter(character: Character) {
     this.selectedCharacter = character;
   }
 
   continue() {
     console.log('Navigating with character:', this.selectedCharacter);
-    this.router.navigate(['/character-profile'], {
-      state: { character: this.selectedCharacter },
+    this.characterService.createProfile(this.selectedCharacter).subscribe({
+      next: () => {
+        this.router.navigate(['/character-profile'], {
+          state: { character: this.selectedCharacter },
+        });
+      },
+      error: (error) => {
+        console.error('Error creating profile:', error);
+      },
     });
   }
 }

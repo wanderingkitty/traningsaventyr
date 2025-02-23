@@ -6,7 +6,7 @@ import { User } from 'backend/models/user';
 import { AuthService } from '../services/auth.service';
 
 @Component({
-  selector: 'character-profile',
+  selector: 'app-character-profile',
   templateUrl: './character-profile.component.html',
   styleUrls: ['./character-profile.component.scss'],
   standalone: true,

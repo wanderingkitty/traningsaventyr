@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import { connect } from './data/dbConnection';
 import { userRouter } from './routes/userRoute';
 import cors from 'cors';
+import profileRouter from './routes/profileRoute';
 
 dotenv.config();
 
@@ -11,7 +12,7 @@ const port = Number(process.env['PORT']) || 4444;
 
 app.use(
   cors({
-    origin: 'http://localhost:4200', // Allow only frontend
+    origin: 'http://localhost:4200',
     methods: 'GET,POST,PUT,DELETE',
     allowedHeaders: 'Content-Type,Authorization',
   })
@@ -32,11 +33,7 @@ connect()
 
 // Routes
 app.use('/api/users', userRouter);
-
-// Basic route для проверки
-app.get('/', (req: Request, res: Response) => {
-  res.json({ message: 'API работает!' });
-});
+app.use('/api/profiles', profileRouter);
 
 // Error handling
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
