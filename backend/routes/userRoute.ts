@@ -1,6 +1,6 @@
 import express from 'express';
 import { getDb, connect } from '../data/dbConnection';
-import { Collection } from 'mongodb';
+import { Collection, ObjectId } from 'mongodb';
 import { User } from '../models/user.js';
 import { validateLogin } from '../data/validation/validateLogin';
 import { generateToken } from '../data/authMiddleware';
@@ -18,7 +18,7 @@ userRouter.get('/', async (req, res) => {
   }
 });
 
-// POST create user
+// POST login
 userRouter.post('/login', async (req, res) => {
   console.log('Received login request:', req.body);
   const { username, password } = req.body;
@@ -82,4 +82,61 @@ userRouter.post('/login', async (req, res) => {
     });
   }
 });
+
+//POST create new user
+userRouter.post('/signup', async (req, res) => {
+  console.log('Received signup request:', req.body);
+  const { name, password, userClass } = req.body;
+
+  try {
+    await connect();
+    const userCollection: Collection<User> = getDb().collection('users');
+
+    const existingUser = await userCollection.findOne({ name });
+    if (existingUser) {
+      res.status(400).json({
+        error: 'User already exists',
+        message: 'Username already taken',
+      });
+      return;
+    }
+
+    const userId = new ObjectId().toString();
+    const _id = new ObjectId();
+
+    const newUser: User = {
+      _id,
+      userId,
+      name,
+      password,
+      class: userClass,
+    };
+
+    await userCollection.insertOne(newUser);
+
+    const token = generateToken(newUser.userId);
+    return res.status(201).json({
+      status: 'success',
+      message: 'User created successfully',
+      data: {
+        token,
+        user: {
+          userId: newUser.userId,
+          name: newUser.name,
+          class: newUser.class,
+        },
+      },
+    });
+  } catch (error) {
+    console.error('Signup error:', error);
+    return res.status(500).json({
+      status: 'error',
+      message: 'Server error',
+      details: {
+        error: 'Please try again later',
+      },
+    });
+  }
+});
+
 export { userRouter };

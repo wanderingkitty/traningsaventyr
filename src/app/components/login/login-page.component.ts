@@ -24,6 +24,6 @@ export class LoginPageComponent {
   }
 
   onSignin() {
-    this.router.navigate(['/register']);
+    this.router.navigate(['/signup']);
   }
 }

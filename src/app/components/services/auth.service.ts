@@ -50,6 +50,32 @@ export class AuthService {
     }
   }
 
+  async signup(username: string, password: string) {
+    try {
+      const response = await fetch(`${this.apiUrl}/signup`, {
+        method: 'POST',
+        headers: { 'Content-type': 'application/json' },
+        body: JSON.stringify({ name: username, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        const userData = { name: username };
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(userData));
+        }
+        this.currentUserSubject.next(userData);
+        this.router.navigate(['/character-creation']);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      return false;
+    }
+  }
+
   logout() {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('token');

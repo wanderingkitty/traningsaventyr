@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Character } from 'backend/models/character';
-import { CharacterProfileComponent } from '../profile/character-profile.component';
+import { Character, CharacterProfile } from 'backend/models/character';
 import { CharacterService } from '../services/character.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'character-creation-page',
@@ -15,7 +15,8 @@ import { CharacterService } from '../services/character.service';
 export class CharacterCreationComponent {
   constructor(
     private router: Router,
-    private characterService: CharacterService
+    private characterService: CharacterService,
+    private authService: AuthService
   ) {}
 
   characters: Character[] = [
@@ -127,6 +128,50 @@ export class CharacterCreationComponent {
   ];
 
   selectedCharacter: Character = this.characters[0];
+  loading = true;
+  existingProfile: CharacterProfile | null = null;
+
+  ngOnInit() {
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser) {
+      console.log('User not logged in, redirecting to login');
+      this.router.navigate(['/login']);
+      return;
+    }
+    this.loadExistingProfile();
+  }
+
+  loadExistingProfile() {
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser) return;
+    this.loading = true;
+
+    this.characterService.getUserProfile(currentUser.name).subscribe({
+      next: (profile) => {
+        console.log('Existing profile loaded:', profile);
+
+        if (profile) {
+          if (profile.selectedCharacterName) {
+            this.preSelectCharacter(profile.selectedCharacterName);
+          }
+        }
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading profile:', error);
+        this.loading = false;
+      },
+    });
+  }
+
+  preSelectCharacter(characterName: string) {
+    const foundCharacter = this.characters.find(
+      (c) => c.name === characterName
+    );
+    if (foundCharacter) {
+      this.selectedCharacter = foundCharacter;
+    }
+  }
 
   selectCharacter(character: Character) {
     this.selectedCharacter = character;
@@ -134,15 +179,50 @@ export class CharacterCreationComponent {
 
   continue() {
     console.log('Navigating with character:', this.selectedCharacter);
-    this.characterService.createProfile(this.selectedCharacter).subscribe({
-      next: () => {
-        this.router.navigate(['/character-profile'], {
-          state: { character: this.selectedCharacter },
+
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser) {
+      console.error('User not logged in');
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(
+        'selectedCharacter',
+        JSON.stringify(this.selectedCharacter)
+      );
+    }
+
+    if (this.existingProfile) {
+      // Обновляем существующий профиль
+      this.characterService
+        .updateProfile(
+          this.existingProfile._id as string,
+          this.selectedCharacter
+        )
+        .subscribe({
+          next: () => {
+            this.router.navigate(['/character-profile'], {
+              state: { character: this.selectedCharacter },
+            });
+          },
+          error: (error) => {
+            console.error('Error updating profile:', error);
+          },
         });
-      },
-      error: (error) => {
-        console.error('Error creating profile:', error);
-      },
-    });
+    } else {
+      // Создаем новый профиль
+      this.characterService.createProfile(this.selectedCharacter).subscribe({
+        next: () => {
+          this.router.navigate(['/character-profile'], {
+            state: { character: this.selectedCharacter },
+          });
+        },
+        error: (error) => {
+          console.error('Error creating profile:', error);
+        },
+      });
+    }
   }
 }

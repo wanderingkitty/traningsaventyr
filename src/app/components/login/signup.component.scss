@@ -1,11 +1,11 @@
-.login-table {
+.signup-table {
   position: relative;
   height: 100vh;
   width: 100vw;
   background-color: #0d1419;
 }
 
-.login-block {
+.signup-container {
   font-family: "Fira Sans", serif;
   margin: 0 auto;
   padding: 20px;
@@ -20,7 +20,7 @@
   text-align: center;
 }
 
-h1 {
+h2 {
   color: #ffffff;
   font-weight: 800;
   font-style: normal;
@@ -31,7 +31,11 @@ span {
   font-weight: 200;
 }
 
-.login-block input {
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group input {
   width: 100%;
   padding: 10px;
   margin: 10px 0;
@@ -41,7 +45,14 @@ span {
   outline: none;
 }
 
-.sign-in {
+.hint {
+  display: block;
+  font-size: 12px;
+  margin-top: 5px;
+  color: #cccccc;
+}
+
+button[type="submit"] {
   background-color: #00ffff;
   color: #0d1419;
   font-weight: 500;
@@ -53,27 +64,54 @@ span {
   cursor: pointer;
 }
 
+button[type="submit"]:disabled {
+  background-color: #7fd4d4;
+  cursor: not-allowed;
+}
+
+.error-message {
+  color: #ff6b6b;
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.login-link {
+  color: #ffffff;
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.login-link a {
+  color: #00ffff;
+  text-decoration: none;
+  margin-left: 5px;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+}
+
 @media screen and (max-width: 768px) {
-  .login-block {
+  .signup-container {
     padding: 15px;
     width: 85%;
   }
 }
 
 @media screen and (max-width: 480px) {
-  .login-block {
+  .signup-container {
     padding: 10px;
     width: 95%;
   }
 
-  .login-block input {
+  .form-group input {
     padding: 8px;
     margin: 8px 0;
   }
 }
 
 @media screen and (max-height: 500px) {
-  .login-block {
+  .signup-container {
     position: relative;
     transform: none;
     top: 20px;

@@ -227,3 +227,118 @@ li {
     transform: scale(1.05);
   }
 }
+
+/* Добавьте только эти новые стили к вашему существующему CSS */
+
+/* Стили для уровня */
+.level-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.level-badge {
+  background: linear-gradient(90deg, #5a3f76, #7a52a1);
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  margin-left: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Стили для отображения XP */
+.xp-container {
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.xp-text {
+  text-align: center;
+  font-size: 12px;
+  margin-top: 5px;
+  color: #5a3f76;
+}
+
+/* Стили для статистики тренировок */
+.workout-stats {
+  display: flex;
+  justify-content: space-around;
+  margin: 15px 0;
+  padding: 10px;
+  background-color: rgba(90, 63, 118, 0.1);
+  border-radius: 8px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-value {
+  font-size: 18px;
+  font-weight: bold;
+  color: #5a3f76;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #89919e;
+}
+
+/* Стили для отображения наград за XP */
+.achievement-xp,
+.challenge-xp {
+  display: inline-block;
+  padding: 2px 6px;
+  background-color: rgba(90, 63, 118, 0.2);
+  border-radius: 4px;
+  font-size: 12px;
+  color: #5a3f76;
+  margin-top: 5px;
+}
+
+/* Стили для требований к способностям */
+.ability-req {
+  font-size: 12px;
+  color: #5a3f76;
+  margin-left: 8px;
+}
+
+/* Стили для контейнера следующего уровня */
+.next-level-container {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+
+.next-level-value {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(90deg, #5a3f76, #7a52a1);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  margin-right: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.next-level-info {
+  flex: 1;
+}
+
+.next-level-info p {
+  margin: 5px 0;
+  font-size: 14px;
+}

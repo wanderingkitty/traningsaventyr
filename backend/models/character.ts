@@ -21,10 +21,18 @@ export interface Character {
   }[];
   specialAbilities: SpecialAbility[];
 }
-
 export interface CharacterProfile {
   _id?: string; // ID документа в MongoDB
   userId: string; // Связь с пользователем
-  selectedClass: string; // Выбранный класс
+  username?: string; // Имя пользователя
+  selectedCharacterName: string; // Выбранный класс
   characterData: Character; // Все данные персонажа
+  progress?: {
+    // Встроенное определение типа
+    level: number;
+    experience: number;
+    experienceToNextLevel: number;
+  };
+  createdAt?: Date; // Дата создания
+  updatedAt?: Date; // Дата обновления
 }

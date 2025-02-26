@@ -18,6 +18,7 @@ profileRouter.get('/', async (req, res) => {
 
 profileRouter.get('/:userId', async (req, res) => {
   try {
+    console.log('Requested userId:', req.params.userId); // Логируем userId
     const db = getDb();
     const profile = await db.collection('profiles').findOne({
       userId: req.params.userId,
@@ -39,7 +40,7 @@ profileRouter.post('/', async (req, res) => {
 
     const newProfile = {
       userId: req.body.userId,
-      username: req.body.username, // Добавляем имя пользователя
+      username: req.body.username,
       selectedCharacterName: req.body.selectedCharacterName,
       characterData: req.body.characterData,
     };
@@ -50,6 +51,42 @@ profileRouter.post('/', async (req, res) => {
     res.status(201).json(result);
   } catch (error: any) {
     res.status(400).json({ message: error.message });
+  }
+});
+
+// Эндпоинт для обновления прогресса
+profileRouter.patch('/progress/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { progress } = req.body;
+
+    if (!progress) {
+      return res.status(400).json({ message: 'Progress data is required' });
+    }
+
+    const db = getDb();
+    const profileCollection = db.collection('profiles');
+
+    const result = await profileCollection.updateOne(
+      { userId },
+      {
+        $set: {
+          progress,
+          updatedAt: new Date(),
+        },
+      }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ message: 'Profile not found' });
+    }
+
+    res.json({
+      message: 'Progress updated successfully',
+      modifiedCount: result.modifiedCount,
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating progress', error });
   }
 });
 
