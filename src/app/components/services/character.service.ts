@@ -3,8 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { AuthService } from './auth.service';
 import { Character, CharacterProfile } from 'backend/models/character';
 
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, catchError, of, tap } from 'rxjs';
 
 interface CharacterProgress {
   level: number;
@@ -53,7 +52,7 @@ export class CharacterService {
           }
         }
       }),
-      catchError((error) => {
+      catchError((error: any) => {
         console.error('Error fetching profile:', error);
         return of(null);
       })

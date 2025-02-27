@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { CharacterService } from '../services/character.service';
@@ -11,7 +11,6 @@ import { CharacterService } from '../services/character.service';
   imports: [RouterModule],
 })
 export class LandingComponent implements OnInit {
-  // Флаг для отслеживания статуса авторизации
   isLoggedIn = false;
 
   constructor(
@@ -21,15 +20,88 @@ export class LandingComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // Просто проверяем статус, но НЕ перенаправляем
     const currentUser = this.authService.getCurrentUser();
     this.isLoggedIn = !!currentUser;
 
-    // Выводим информацию для отладки
     console.log(
       'Current user status:',
       this.isLoggedIn ? 'Logged in' : 'Not logged in'
     );
+    this.handleParallax();
+  }
+
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    this.handleParallax();
+  }
+
+  private handleParallax(): void {
+    const scrollTop = window.scrollY;
+    const maxScroll = 800;
+    const windowHeight = window.innerHeight;
+    const pageMiddle = windowHeight / 2;
+
+    const title = document.querySelector('.title') as HTMLElement;
+    const content = document.querySelector('.content') as HTMLElement;
+
+    if (title && content) {
+      // Get the position of the content element
+      const contentRect = content.getBoundingClientRect();
+      const contentTop = contentRect.top + window.scrollY;
+
+      // Determine if content has moved below the title
+      const contentMovedDown = contentTop < 0;
+
+      if (contentMovedDown) {
+        // When content moves down, make title follow it
+        // Calculate how far the content has moved down
+        const contentOffset = Math.abs(contentTop);
+
+        // Apply a smaller factor to the title movement to create a parallax effect
+        // but ensure it follows the content
+        title.style.transform = `translateY(${contentOffset * 0.7}px)`;
+        title.style.marginTop = -scrollTop * 0.3 + 'px'; // Reduced factor
+      } else {
+        // Normal parallax effect when content is still visible above
+        title.style.transform = 'translateY(0)';
+        title.style.marginTop = -scrollTop * 0.5 + 'px';
+      }
+
+      // Handle content movement
+      let transformValue = -scrollTop * 1.3;
+
+      if (scrollTop > pageMiddle) {
+        const scrollBeyondMiddle = scrollTop - pageMiddle;
+        transformValue = -pageMiddle * 1.3 + scrollBeyondMiddle * 0.7;
+      }
+
+      content.style.transform = `translateY(${transformValue}px)`;
+    } else {
+      console.warn('Title or content element not found!');
+    }
+
+    const trees = document.querySelector('.trees') as HTMLElement;
+    if (trees) {
+      // Start with trees already visible
+      trees.style.opacity = '1';
+
+      // Adjust the scale range to be more subtle
+      const startScale = 1.3; // Lower starting scale
+      const endScale = 1.1; // Slightly larger end scale
+
+      // Make trees move more slowly
+      const treeMaxScroll = maxScroll * 0.7; // 70% of maxScroll
+      const treeProgress = Math.min(1, scrollTop / treeMaxScroll);
+
+      // Calculate scale based on scroll position
+      const treeScale = startScale - (startScale - endScale) * treeProgress;
+
+      // Position trees to be visible from the start
+      const initialTreeOffset = 30; // Smaller offset so trees are more visible
+      const treeY = initialTreeOffset * (1 - treeProgress);
+
+      trees.style.transform = `scale(${treeScale}) translateY(${treeY}px)`;
+    }
   }
 
   getStarted() {
@@ -37,26 +109,21 @@ export class LandingComponent implements OnInit {
     const currentUser = this.authService.getCurrentUser();
 
     if (currentUser) {
-      // Если пользователь авторизован, проверяем наличие профиля
       this.characterService.getUserProfile(currentUser.name).subscribe({
         next: (profile) => {
           console.log('Profile found:', profile);
           if (profile) {
-            // Есть профиль - идем на страницу персонажа
             this.router.navigate(['/character-profile']);
           } else {
-            // Нет профиля - идем на страницу создания персонажа
             this.router.navigate(['/character-creation']);
           }
         },
         error: (err) => {
           console.error('Error getting profile:', err);
-          // В случае ошибки идем на страницу создания персонажа
           this.router.navigate(['/character-creation']);
         },
       });
     } else {
-      // Пользователь не авторизован - идем на страницу входа
       this.router.navigate(['/login']);
     }
   }

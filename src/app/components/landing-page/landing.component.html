@@ -1,10 +1,100 @@
-<div class="main-section">
+<div class="main-section sky-background-visible">
+  <div class="sky-background">
+    <img src="/assets/nightsky.jpg" alt="Night Sky" />
+  </div>
+
+  <div class="mountains mountains-back"></div>
+  <div class="mountains mountains-mid"></div>
+  <div class="mountains mountains-front"></div>
+
   <div class="title">
     <h1>Training adventure</h1>
     <p>Transform your workouts into adventure</p>
     <div class="button-group">
       <button (click)="getStarted()" class="btn-primary">Get started</button>
       <button (click)="learnMore()" class="btn-secondary">Learn more</button>
+    </div>
+  </div>
+
+  <img class="trees" src="/assets/trees-front.png" alt="Trees" />
+
+  <div class="content visible">
+    <h2>Choose your path</h2>
+    <div class="cards">
+      <div class="card">
+        <img src="/assets/running-avatar.jpg" alt="Runner" />
+        <h3>Runner</h3>
+        <p>Master the art of endurance and speed</p>
+      </div>
+      <div class="card">
+        <img src="/assets/ascender-img.jpg" alt="Ascender" />
+        <h3>Ascender</h3>
+        <p>Conquer heights with power and precision</p>
+      </div>
+
+      <div class="card">
+        <img src="/assets/yoga-avatar.jpg" alt="Zen-Warrir" />
+        <h3>Zen Warrior</h3>
+        <p>
+          Find strength in stillness, power in breath, and balance in movement
+        </p>
+      </div>
+    </div>
+    <button (click)="getStarted()" class="btn-primary">
+      Create your character
+    </button>
+  </div>
+</div>
+
+<div class="about-section">
+  <div class="about-mountain"></div>
+
+  <div class="about">
+    <h1>About your adventure</h1>
+    <div class="description">
+      <div class="description-column">
+        <p class="intro-text">
+          Training Adventure transforms ordinary fitness into an epic journey of
+          self-discovery.
+        </p>
+
+        <p>
+          Choose your path as an Ascender with mastery of heights, a Runner with
+          unmatched speed, or a Zen Warrior with perfect balance.
+        </p>
+
+        <p>
+          Every workout strengthens not just your body, but your character's
+          abilities in this immersive fitness RPG.
+        </p>
+      </div>
+
+      <div class="description-column">
+        <p>
+          Track your progress through personalized achievements and watch as
+          your character evolves alongside your real-world strength.
+        </p>
+
+        <p>
+          Face challenges designed for your class, unlock special abilities that
+          reflect your growing mastery, and stay motivated as you complete
+          quests tailored to your path.
+        </p>
+
+        <p class="outro-text">
+          Begin your adventure today and transform your fitness routine into a
+          hero's journey of growth and achievement.
+        </p>
+      </div>
+    </div>
+
+    <div class="navigation-buttons">
+      <a href="#classes" class="nav-button">CLASS SELECTION GUIDE</a>
+      <a href="#faq" class="nav-button">TRAINING ADVENTURE FAQ</a>
+    </div>
+
+    <div class="cta-container">
+      <button class="cta-button">START YOUR JOURNEY</button>
     </div>
   </div>
 </div>
