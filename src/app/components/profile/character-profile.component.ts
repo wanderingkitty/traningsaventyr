@@ -15,7 +15,7 @@ import { Character } from 'backend/models/character';
   imports: [CommonModule],
 })
 export class CharacterProfileComponent implements OnInit {
-  character?: Character; // Явно указываем, что character может быть undefined
+  character?: Character;
   user$: Observable<User>;
 
   constructor(
@@ -49,6 +49,20 @@ export class CharacterProfileComponent implements OnInit {
 
   ngOnInit() {
     console.log('Component initialized');
+
+    // Добавьте эту строку для проверки содержимого localStorage
+    console.log(
+      'LocalStorage character:',
+      JSON.parse(localStorage.getItem('selectedCharacter') || '{}')
+    );
+
+    if (this.character) {
+      console.log(
+        'Number of achievements:',
+        this.character.achievements?.length
+      );
+      console.log('All achievements:', this.character.achievements);
+    }
 
     // Инициализируем необходимые свойства, если они не определены
     this.initializeCharacterProperties();

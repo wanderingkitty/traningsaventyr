@@ -1,5 +1,3 @@
-// Интерфейсы для моделей характера
-
 export interface SpecialAbility {
   name: string;
   unlockedAtLevel?: number; // Опциональное поле
@@ -19,7 +17,6 @@ export interface Achievement {
 export interface Challenge {
   description: string;
   progress: number;
-  unlocks?: string; // Добавлено новое свойство
   xpReward?: number; // Добавлено новое свойство
 }
 

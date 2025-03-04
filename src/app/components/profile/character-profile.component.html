@@ -87,30 +87,27 @@
   </div>
 
   <div class="right-content">
+    <h3>🎯 Challenges</h3>
     <div
-      class="card challenges-card"
+      class="challenges-card"
       *ngIf="character.challenges && character.challenges.length > 0"
     >
-      <h3>🎯 Challenges</h3>
-      <p>
-        {{
-          character.challenges[0].description || "Complete your first workout"
-        }}
-      </p>
-      <span class="challenge-unlock" *ngIf="character.challenges[0]?.unlocks"
-        >Unlock: {{ character.challenges[0].unlocks }}</span
-      >
-      <div class="progress-bar">
-        <div
-          class="progress-bar-inner"
-          [style.width.%]="character.challenges[0].progress || 0"
-        ></div>
-      </div>
-      <span class="challenge-xp" *ngIf="character.challenges[0]?.xpReward"
-        >+{{ character.challenges[0].xpReward }} XP</span
-      >
-    </div>
+      <div *ngFor="let challenge of character.challenges">
+        <div class="challenge-container">
+          <p>{{ challenge.description }}</p>
 
+          <div class="progress-bar">
+            <div
+              class="progress-bar-inner"
+              [style.width.%]="challenge.progress || 0"
+            ></div>
+          </div>
+          <span class="challenge-xp" *ngIf="challenge.xpReward"
+            >+{{ challenge.xpReward }} XP</span
+          >
+        </div>
+      </div>
+    </div>
     <div
       class="card abilities-card"
       *ngIf="
@@ -118,7 +115,7 @@
       "
     >
       <h3>✨ Special Abilities</h3>
-      <ul class="abilities-list">
+      <ul class="abilities-card">
         <li *ngFor="let ability of character.specialAbilities">
           <span class="ability-name">{{ ability.name || "Ability" }}</span>
           <div class="progress-bar">
@@ -138,24 +135,21 @@
       </ul>
     </div>
 
-    <!-- Следующий уровень -->
-    <div class="card next-level-card">
-      <h3>🔼 Next Level</h3>
-      <div class="next-level-container">
-        <div class="next-level-value">{{ (character.level || 1) + 1 }}</div>
-        <div class="next-level-info">
-          <p>
-            Collect
-            <strong>{{
-              (character.xpToNextLevel || 1000) - (character.xp || 0)
-            }}</strong>
-            more XP to level up!
-          </p>
-          <p>
-            <strong>Level {{ (character.level || 1) + 1 }} reward:</strong>
-            {{ getNextLevelReward(character.level || 1) }}
-          </p>
-        </div>
+    <h3>🔼 Next Level</h3>
+    <div class="next-level-container">
+      <div class="next-level-value">{{ (character.level || 1) + 1 }}</div>
+      <div class="next-level-info">
+        <p>
+          Collect
+          <strong>{{
+            (character.xpToNextLevel || 1000) - (character.xp || 0)
+          }}</strong>
+          more XP to level up!
+        </p>
+        <p>
+          <strong>Level {{ (character.level || 1) + 1 }} reward:</strong>
+          {{ getNextLevelReward(character.level || 1) }}
+        </p>
       </div>
     </div>
   </div>
@@ -170,7 +164,6 @@
   </div>
 </div>
 
-<!-- Добавляем запасной вариант, если character не загружен -->
 <div *ngIf="!character" class="character-profile loading">
   <div class="header">
     <h1 class="profile-title">Loading character profile...</h1>

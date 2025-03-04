@@ -18,7 +18,7 @@ profileRouter.get('/', async (req, res) => {
 
 profileRouter.get('/:userId', async (req, res) => {
   try {
-    console.log('Requested userId:', req.params.userId); // Логируем userId
+    console.log('Requested userId:', req.params.userId);
     const db = getDb();
     const profile = await db.collection('profiles').findOne({
       userId: req.params.userId,
@@ -42,7 +42,10 @@ profileRouter.post('/', async (req, res) => {
       userId: req.body.userId,
       username: req.body.username,
       selectedCharacterName: req.body.selectedCharacterName,
-      characterData: req.body.characterData,
+      characterData: {
+        ...req.body.characterData,
+        challenges: req.body.characterData.challenges || [], // <--- Добавил проверку
+      },
     };
 
     console.log('Saving profile:', newProfile);
@@ -55,7 +58,7 @@ profileRouter.post('/', async (req, res) => {
 });
 
 // Эндпоинт для обновления прогресса
-profileRouter.patch('/progress/:userId', async (req, res) => {
+profileRouter.put('/progress/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
     const { progress } = req.body;

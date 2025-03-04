@@ -28,7 +28,6 @@ export class CharacterCreationComponent implements OnInit {
       avatar: '/assets/ascender-img.jpg',
       class: 'Climber',
       stats: {
-        // Добавлена статистика
         totalWorkouts: 0,
         totalXpGained: 0,
       },
@@ -94,8 +93,24 @@ export class CharacterCreationComponent implements OnInit {
         {
           description: 'Complete 5 climbing sessions',
           progress: 0,
-          unlocks: '🏔 Peak power',
           xpReward: 100,
+        },
+
+        {
+          description: 'Reach a height of 10 meters',
+          progress: 0,
+          xpReward: 120,
+        },
+
+        {
+          description: 'Complete a challenging route without falling',
+          progress: 0,
+          xpReward: 150,
+        },
+        {
+          description: 'Train climbing 3 days in a row',
+          progress: 0,
+          xpReward: 130,
         },
       ],
       specialAbilities: [
@@ -112,7 +127,7 @@ export class CharacterCreationComponent implements OnInit {
           unlocked: false,
         },
         {
-          name: '🕸️ Spider grip',
+          name: '🕷️ Spider grip',
           unlockedAtLevel: 15,
           requiredLevel: 15,
           unlocked: false,
@@ -157,7 +172,6 @@ export class CharacterCreationComponent implements OnInit {
         {
           description: 'Run 3 different routes',
           progress: 0,
-          unlocks: '⚡ Speed burst',
           xpReward: 80,
         },
       ],
@@ -220,7 +234,6 @@ export class CharacterCreationComponent implements OnInit {
         {
           description: 'Hold a pose for 1 min',
           progress: 0,
-          unlocks: '☯️ Balance Sage',
           xpReward: 70,
         },
       ],

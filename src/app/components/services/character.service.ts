@@ -39,6 +39,8 @@ export class CharacterService {
 
     return this.http.get<CharacterProfile>(`${this.apiUrl}/${username}`).pipe(
       tap((profile) => {
+        console.log('Recieved profile', profile);
+
         if (profile && profile.progress) {
           this.characterProgressSubject.next(profile.progress);
 
@@ -58,6 +60,8 @@ export class CharacterService {
   }
 
   createProfile(character: Character) {
+    console.log('Creating profile with character data:', character);
+    console.log('Number of achievements:', character.achievements?.length);
     const currentUser = this.authService.getCurrentUser();
 
     if (!currentUser) {
@@ -86,7 +90,7 @@ export class CharacterService {
       character.avatar = this.getDefaultAvatarForClass(character.name);
     }
 
-    return this.http.patch(`${this.apiUrl}/${profileId}`, {
+    return this.http.put(`${this.apiUrl}/${profileId}`, {
       selectedCharacterName: character.name,
       characterData: character,
       progress: this.characterProgressSubject.value,
@@ -132,7 +136,7 @@ export class CharacterService {
     if (!userId) return;
 
     this.http
-      .patch(`${this.apiUrl}/progress/${userId}`, { progress })
+      .put(`${this.apiUrl}/progress/${userId}`, { progress })
       .pipe(
         catchError((error) => {
           console.error('Error updating progress on server:', error);
