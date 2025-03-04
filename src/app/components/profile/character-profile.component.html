@@ -57,7 +57,12 @@
     </div>
 
     <h3>🏆 Achievements</h3>
-    <div *ngIf="character.achievements?.length > 0; else noAchievements">
+    <div
+      *ngIf="
+        character.achievements && character.achievements.length > 0;
+        else noAchievements
+      "
+    >
       <li *ngFor="let achievement of character.achievements">
         <span class="achievement-name">{{ achievement.name }}</span>
         <p class="achievement-description">{{ achievement.description }}</p>
@@ -82,11 +87,14 @@
   </div>
 
   <div class="right-content">
-    <div class="card challenges-card" *ngIf="character.challenges?.length > 0">
+    <div
+      class="card challenges-card"
+      *ngIf="character.challenges && character.challenges.length > 0"
+    >
       <h3>🎯 Challenges</h3>
       <p>
         {{
-          character.challenges[0]?.description || "Complete your first workout"
+          character.challenges[0].description || "Complete your first workout"
         }}
       </p>
       <span class="challenge-unlock" *ngIf="character.challenges[0]?.unlocks"
@@ -95,7 +103,7 @@
       <div class="progress-bar">
         <div
           class="progress-bar-inner"
-          [style.width.%]="character.challenges[0]?.progress || 0"
+          [style.width.%]="character.challenges[0].progress || 0"
         ></div>
       </div>
       <span class="challenge-xp" *ngIf="character.challenges[0]?.xpReward"
@@ -105,7 +113,9 @@
 
     <div
       class="card abilities-card"
-      *ngIf="character.specialAbilities?.length > 0"
+      *ngIf="
+        character.specialAbilities && character.specialAbilities.length > 0
+      "
     >
       <h3>✨ Special Abilities</h3>
       <ul class="abilities-list">
@@ -143,7 +153,7 @@
           </p>
           <p>
             <strong>Level {{ (character.level || 1) + 1 }} reward:</strong>
-            <!-- {{ getNextLevelReward(character.level || 1) }} -->
+            {{ getNextLevelReward(character.level || 1) }}
           </p>
         </div>
       </div>

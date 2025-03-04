@@ -3,6 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { CharacterService } from '../services/character.service';
+import { Observable } from 'rxjs';
+import { User } from 'backend/models/user';
+import { Character } from 'backend/models/character';
 
 @Component({
   selector: 'app-character-profile',
@@ -12,8 +15,8 @@ import { CharacterService } from '../services/character.service';
   imports: [CommonModule],
 })
 export class CharacterProfileComponent implements OnInit {
-  character: any;
-  user$;
+  character?: Character; // Явно указываем, что character может быть undefined
+  user$: Observable<User>;
 
   constructor(
     private router: Router,
@@ -46,26 +49,53 @@ export class CharacterProfileComponent implements OnInit {
 
   ngOnInit() {
     console.log('Component initialized');
+
+    // Инициализируем необходимые свойства, если они не определены
+    this.initializeCharacterProperties();
+
     // Здесь можно получить обновленную информацию о прогрессе с сервера
     this.updateAchievementProgress();
+  }
+
+  // Новый метод для инициализации свойств персонажа
+  private initializeCharacterProperties() {
+    if (this.character) {
+      // Инициализируем массивы, если они не определены
+      if (!this.character.achievements) {
+        this.character.achievements = [];
+      }
+
+      if (!this.character.challenges) {
+        this.character.challenges = [];
+      }
+
+      if (!this.character.specialAbilities) {
+        this.character.specialAbilities = [];
+      }
+
+      // Инициализируем статистику, если она не определена
+      if (!this.character.stats) {
+        this.character.stats = {
+          totalWorkouts: 0,
+          totalXpGained: 0,
+        };
+      }
+
+      // Устанавливаем значения по умолчанию для численных свойств, если они не определены
+      if (this.character.xp === undefined) this.character.xp = 0;
+      if (this.character.level === undefined) this.character.level = 1;
+      if (this.character.xpToNextLevel === undefined)
+        this.character.xpToNextLevel = 1000;
+    }
   }
 
   // Метод для обновления прогресса достижений
   updateAchievementProgress() {
     // Для примера добавим некоторый прогресс
-    // В реальности эти данные должны приходить с сервера
     if (this.character && this.character.achievements) {
       const currentUser = this.authService.getCurrentUser();
 
       if (currentUser && currentUser.userId) {
-        // Здесь можно сделать запрос к серверу для получения актуального прогресса
-        // this.characterService.getAchievementProgress(currentUser.userId).subscribe(
-        //   progress => {
-        //     // Обновляем прогресс достижений
-        //     this.applyProgressData(progress);
-        //   }
-        // );
-
         // Пока нет реального API, просто обновим прогресс для демонстрации
         this.character.achievements.forEach(
           (achievement: any, index: number) => {
@@ -113,5 +143,20 @@ export class CharacterProfileComponent implements OnInit {
       localStorage.setItem('selectedCharacter', JSON.stringify(this.character));
     }
     this.router.navigate(['/workout-page']);
+  }
+
+  // Добавлен метод для получения награды за следующий уровень
+  getNextLevelReward(currentLevel: number): string {
+    // Список возможных наград по уровням
+    const rewards = [
+      'New ability: Strength Boost',
+      'Increased stamina',
+      'New ability: Endurance Master',
+      'Improved recovery',
+      'New ability: Mental Focus',
+    ];
+
+    // Возвращаем награду по модулю, чтобы не выходить за пределы массива
+    return rewards[currentLevel % rewards.length];
   }
 }

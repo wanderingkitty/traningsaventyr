@@ -16,7 +16,7 @@ interface CharacterProgress {
 })
 export class CharacterService {
   private apiUrl = 'http://localhost:1408/api/profiles';
-  private baseXpRequirement = 1000; // Базовое требование XP для перехода с 1 на 2 уровень
+  private baseXpRequirement = 1000;
 
   private characterProgressSubject = new BehaviorSubject<CharacterProgress>({
     level: 1,
@@ -40,10 +40,8 @@ export class CharacterService {
     return this.http.get<CharacterProfile>(`${this.apiUrl}/${username}`).pipe(
       tap((profile) => {
         if (profile && profile.progress) {
-          // Если профиль найден, обновляем прогресс персонажа
           this.characterProgressSubject.next(profile.progress);
 
-          // Также сохраняем в localStorage
           if (typeof window !== 'undefined' && profile.userId) {
             localStorage.setItem(
               `character_progress_${profile.userId}`,
@@ -59,7 +57,6 @@ export class CharacterService {
     );
   }
 
-  // Метод для создания профиля
   createProfile(character: Character) {
     const currentUser = this.authService.getCurrentUser();
 
@@ -68,7 +65,6 @@ export class CharacterService {
       return of({ error: 'No user logged in' });
     }
 
-    // Проверяем, есть ли аватар, если нет, устанавливаем по умолчанию
     if (!character.avatar) {
       character.avatar = this.getDefaultAvatarForClass(character.name);
     }
@@ -85,9 +81,7 @@ export class CharacterService {
     return this.http.post(this.apiUrl, profileData);
   }
 
-  // Новый метод для обновления профиля
   updateProfile(profileId: string, character: Character) {
-    // Проверяем, есть ли аватар, если нет, устанавливаем по умолчанию
     if (!character.avatar) {
       character.avatar = this.getDefaultAvatarForClass(character.name);
     }
@@ -100,12 +94,10 @@ export class CharacterService {
     });
   }
 
-  // Методы для работы с уровнями и опытом персонажа
   private loadCharacterProgress() {
     const currentUser = this.authService.getCurrentUser();
     if (!currentUser) return;
 
-    // Пытаемся загрузить прогресс из localStorage по userId
     if (typeof window !== 'undefined') {
       const savedProgress = localStorage.getItem(
         `character_progress_${currentUser.userId || currentUser.name}`
@@ -124,7 +116,6 @@ export class CharacterService {
     const currentUser = this.authService.getCurrentUser();
     if (!currentUser) return;
 
-    // Сохраняем в localStorage, если доступно
     if (typeof window !== 'undefined') {
       localStorage.setItem(
         `character_progress_${currentUser.userId || currentUser.name}`,
@@ -134,13 +125,10 @@ export class CharacterService {
 
     this.characterProgressSubject.next(progress);
 
-    // Отправляем обновленный прогресс на сервер
     this.updateUserProgress(currentUser.userId || currentUser.name, progress);
   }
 
-  // Новый метод для отправки прогресса на сервер
   private updateUserProgress(userId: string, progress: CharacterProgress) {
-    // Отправляем запрос только если есть userId
     if (!userId) return;
 
     this.http
@@ -154,13 +142,11 @@ export class CharacterService {
       .subscribe();
   }
 
-  // Рассчитываем XP для следующего уровня
   private calculateXpForNextLevel(level: number): number {
     // Формула: база XP * 1.5^(уровень-1)
     return Math.round(this.baseXpRequirement * Math.pow(1.5, level - 1));
   }
 
-  // Добавляем опыт и обрабатываем повышение уровня
   addExperience(amount: number) {
     const currentProgress = this.characterProgressSubject.value;
     let { level, experience } = currentProgress;

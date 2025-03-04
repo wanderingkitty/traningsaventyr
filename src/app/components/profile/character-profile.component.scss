@@ -5,23 +5,23 @@
   align-items: start;
   background: linear-gradient(135deg, #1e1724, #3b2d4a);
   min-height: 100vh;
-  padding: 40px;
+  padding: 20px;
   font-family: "Fira Sans", sans-serif;
   font-weight: 400;
 }
 
 .profile-title {
-  font-size: 24px;
+  margin-bottom: 5px;
+  font-size: 22px;
   font-weight: 600;
   color: #e0d6f5;
-  margin-bottom: 0;
 }
 .header {
   grid-column: 1 / -1;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .nickname {
@@ -33,10 +33,11 @@
   grid-column: 1;
   background: #c4c4c4;
   border-radius: 16px;
-  padding: 25px;
+  padding: 15px;
   text-align: center;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
   text-align: center;
+  overflow-y: auto;
 }
 
 .character-card .achievement-name {
@@ -52,7 +53,7 @@
 .right-content {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 10px;
 }
 
 .character-card h2 {
@@ -62,11 +63,14 @@
 h3 {
   color: #89919e;
   text-align: left;
-  padding-bottom: 10px;
+  padding-bottom: 5px;
+  margin-top: 10px;
+  margin-bottom: 5px;
 }
 
 p {
-  padding-bottom: 5px;
+  padding-bottom: 3px;
+  margin: 0;
 }
 
 li {
@@ -128,7 +132,7 @@ li {
 .card {
   background: #c4c4c4;
   border-radius: 12px;
-  padding: 15px;
+  padding: 7px;
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15);
   width: 100%;
 }
@@ -143,9 +147,9 @@ li {
   align-items: center;
   justify-content: flex-start;
   text-align: left;
-  padding: 8px;
+  padding: 5px;
   border-radius: 6px;
-  margin-bottom: 6px;
+  margin-bottom: 3px;
   background: rgba(255, 255, 255, 0.08);
 }
 
@@ -187,8 +191,9 @@ li {
 .action-buttons {
   display: flex;
   gap: 15px;
-  margin-top: auto;
   grid-column: 2;
+  position: relative;
+  bottom: 2vh;
 }
 
 .btn {
@@ -219,18 +224,16 @@ li {
   background: linear-gradient(135deg, #3b2b4e, #5a3f76);
   color: #ffffff;
   font-weight: 800;
-  padding: 3px;
-  width: 100px;
-  align-items: end;
+  padding: 20px;
+  font-size: 1em;
+  align-items: center;
+  text-align: center;
   &:hover {
     background: rgba(255, 255, 255, 0.2);
     transform: scale(1.05);
   }
 }
 
-/* Добавьте только эти новые стили к вашему существующему CSS */
-
-/* Стили для уровня */
 .level-info {
   display: flex;
   align-items: center;
@@ -253,7 +256,6 @@ li {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* Стили для отображения XP */
 .xp-container {
   position: relative;
   margin-bottom: 15px;
@@ -266,7 +268,6 @@ li {
   color: #5a3f76;
 }
 
-/* Стили для статистики тренировок */
 .workout-stats {
   display: flex;
   justify-content: space-around;
@@ -293,7 +294,6 @@ li {
   color: #89919e;
 }
 
-/* Стили для отображения наград за XP */
 .achievement-xp,
 .challenge-xp {
   display: inline-block;
@@ -305,14 +305,12 @@ li {
   margin-top: 5px;
 }
 
-/* Стили для требований к способностям */
 .ability-req {
   font-size: 12px;
   color: #5a3f76;
   margin-left: 8px;
 }
 
-/* Стили для контейнера следующего уровня */
 .next-level-container {
   display: flex;
   align-items: center;

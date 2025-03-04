@@ -2,15 +2,17 @@ export interface Exercise {
   name: string;
   description: string;
   xpReward: string;
-  xpValue?: number; // Числовое значение XP для расчетов
+  xpValue?: number;
   completed?: boolean;
 }
 
-export interface Achievement {
+export interface WorkoutAchievement {
   name: string;
   description: string;
-  progress: string;
-  xpValue?: number; // Числовое значение XP для расчетов
+  progress: number;
+  progressDescription: string;
+  xpValue?: number;
+  xpReward: number;
   completed?: boolean;
 }
 
@@ -21,11 +23,10 @@ export interface WorkoutProgress {
 
 export interface Workout {
   exercises: Exercise[];
-  achievements: Achievement[];
+  achievements: WorkoutAchievement[];
   progress: WorkoutProgress;
 }
 
-// Опционально: интерфейс для статистики тренировок
 export interface WorkoutStats {
   workoutsCompleted: number;
   exercisesCompleted: number;

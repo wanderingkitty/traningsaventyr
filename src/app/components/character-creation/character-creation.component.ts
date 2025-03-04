@@ -12,7 +12,7 @@ import { AuthService } from '../services/auth.service';
   standalone: true,
   imports: [CommonModule],
 })
-export class CharacterCreationComponent {
+export class CharacterCreationComponent implements OnInit {
   constructor(
     private router: Router,
     private characterService: CharacterService,
@@ -24,92 +24,196 @@ export class CharacterCreationComponent {
       name: 'Ascender',
       level: 1,
       xp: 0,
+      xpToNextLevel: 1000,
       avatar: '/assets/ascender-img.jpg',
+      class: 'Climber',
+      stats: {
+        // Добавлена статистика
+        totalWorkouts: 0,
+        totalXpGained: 0,
+      },
       achievements: [
         {
-          name: '🦾 Grip Strength',
+          name: '🦾 Grip strength',
           description: 'Master your grip power.',
           progress: 0,
+          xpReward: 50,
+          completed: false,
         },
         {
-          name: '🧭 Route Master',
+          name: '🧭 Route master',
           description: 'Conquer different routes.',
           progress: 0,
+          xpReward: 60,
+          completed: false,
         },
         {
-          name: '🧩 Problem Solver',
+          name: '🧩 Problem solver',
           description: 'Find solutions for routes.',
           progress: 0,
+          xpReward: 75,
+          completed: false,
+        },
+        {
+          name: '⏱️ Speed climber',
+          description: 'Beat your previous times on familiar routes.',
+          progress: 0,
+          xpReward: 65,
+          completed: false,
+        },
+        {
+          name: '🔄 Endurance expert',
+          description: 'Maintain climbing stamina for longer sessions.',
+          progress: 0,
+          xpReward: 80,
+          completed: false,
+        },
+        {
+          name: '🧗 Dynamic mover',
+          description: 'Master dynamic movements and jumps.',
+          progress: 0,
+          xpReward: 70,
+          completed: false,
+        },
+        {
+          name: '🦶 Footwork finesse',
+          description: 'Develop precise foot placement techniques.',
+          progress: 0,
+          xpReward: 55,
+          completed: false,
+        },
+        {
+          name: '🌊 Flow state',
+          description: 'Climb with fluid, continuous movements.',
+          progress: 0,
+          xpReward: 90,
+          completed: false,
         },
       ],
       challenges: [
         {
           description: 'Complete 5 climbing sessions',
           progress: 0,
-          unlocks: '🏔 Peak Power',
+          unlocks: '🏔 Peak power',
+          xpReward: 100,
         },
       ],
       specialAbilities: [
-        { name: '🏔 Peak Power', unlockedAtLevel: 5, unlocked: false },
-        { name: '🪨 Rock Master', unlockedAtLevel: 10, unlocked: false },
-        { name: '🕸️ Spider grip', unlockedAtLevel: 15, unlocked: false },
+        {
+          name: '🏔 Peak power',
+          unlockedAtLevel: 5,
+          requiredLevel: 5,
+          unlocked: false,
+        },
+        {
+          name: '🪨 Rock master',
+          unlockedAtLevel: 10,
+          requiredLevel: 10,
+          unlocked: false,
+        },
+        {
+          name: '🕸️ Spider grip',
+          unlockedAtLevel: 15,
+          requiredLevel: 15,
+          unlocked: false,
+        },
       ],
     },
     {
       name: 'Runner',
       level: 1,
       xp: 0,
+      xpToNextLevel: 1000,
       avatar: '/assets/running-avatar.jpg',
+      class: 'Runner',
+      stats: {
+        totalWorkouts: 0,
+        totalXpGained: 0,
+      },
       achievements: [
         {
-          name: '🗾 Distance Goals',
+          name: '🗾 Distance goals',
           description: 'Reach new horizons.',
           progress: 0,
+          xpReward: 50,
+          completed: false,
         },
         {
-          name: '📈 Pace Master',
+          name: '📈 Pace master',
           description: 'Maintain steady speed.',
           progress: 0,
+          xpReward: 60,
+          completed: false,
         },
         {
-          name: '⏱️ Interval Training',
+          name: '⏱️ Interval training',
           description: 'Master speed variation.',
           progress: 0,
+          xpReward: 70,
+          completed: false,
         },
       ],
       challenges: [
         {
           description: 'Run 3 different routes',
           progress: 0,
-          unlocks: '⚡ Speed Burst',
+          unlocks: '⚡ Speed burst',
+          xpReward: 80,
         },
       ],
       specialAbilities: [
-        { name: '⚡ Speed Burst', unlockedAtLevel: 5, unlocked: false },
-        { name: '🔋 Marathon Mind', unlockedAtLevel: 10, unlocked: false },
-        { name: '💨 Recovery master', unlockedAtLevel: 10, unlocked: false },
+        {
+          name: '⚡ Speed burst',
+          unlockedAtLevel: 5,
+          requiredLevel: 5,
+          unlocked: false,
+        },
+        {
+          name: '🔋 Marathon mind',
+          unlockedAtLevel: 10,
+          requiredLevel: 10,
+          unlocked: false,
+        },
+        {
+          name: '💨 Recovery master',
+          unlockedAtLevel: 10,
+          requiredLevel: 10,
+          unlocked: false,
+        },
       ],
     },
     {
       name: 'Zen Warrior',
       level: 1,
       xp: 0,
+      xpToNextLevel: 1000,
       avatar: '/assets/yoga-avatar.jpg',
+      class: 'Yogi',
+      stats: {
+        totalWorkouts: 0,
+        totalXpGained: 0,
+      },
       achievements: [
         {
-          name: '✨ Perfect Form',
+          name: '✨ Perfect form',
           description: 'Focus on alignment.',
           progress: 0,
+          xpReward: 60,
+          completed: false,
         },
         {
-          name: '🧘 Mind Master',
+          name: '🧘 Mind master',
           description: 'Develop inner calm.',
           progress: 0,
+          xpReward: 70,
+          completed: false,
         },
         {
-          name: '🍃 Breath Guide',
+          name: '🍃 Breath guide',
           description: 'Control your breath.',
           progress: 0,
+          xpReward: 55,
+          completed: false,
         },
       ],
       challenges: [
@@ -117,12 +221,28 @@ export class CharacterCreationComponent {
           description: 'Hold a pose for 1 min',
           progress: 0,
           unlocks: '☯️ Balance Sage',
+          xpReward: 70,
         },
       ],
       specialAbilities: [
-        { name: '☯️ Balance Sage', unlockedAtLevel: 5, unlocked: false },
-        { name: '🌸 Inner Peace', unlockedAtLevel: 10, unlocked: false },
-        { name: '🌊 Breath guide', unlockedAtLevel: 10, unlocked: false },
+        {
+          name: '☯️ Balance sage',
+          unlockedAtLevel: 5,
+          requiredLevel: 5,
+          unlocked: false,
+        },
+        {
+          name: '🌸 Inner peace',
+          unlockedAtLevel: 10,
+          requiredLevel: 10,
+          unlocked: false,
+        },
+        {
+          name: '🌊 Breath guide',
+          unlockedAtLevel: 10,
+          requiredLevel: 10,
+          unlocked: false,
+        },
       ],
     },
   ];
@@ -151,6 +271,7 @@ export class CharacterCreationComponent {
         console.log('Existing profile loaded:', profile);
 
         if (profile) {
+          this.existingProfile = profile;
           if (profile.selectedCharacterName) {
             this.preSelectCharacter(profile.selectedCharacterName);
           }

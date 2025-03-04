@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { Workout, Exercise, Achievement } from '../models/workout.model';
 import { CharacterService } from '../services/character.service';
+import { Workout } from '../models/workout.model';
 
 @Component({
   selector: 'workout-page',
@@ -16,15 +16,12 @@ export class WorkoutComponent implements OnInit {
   private timer: any;
   currentTime: number = 0;
 
-  // Для отслеживания статуса упражнений
   completedExercises: { [key: string]: boolean } = {};
   completedAchievements: { [key: string]: boolean } = {};
 
-  // Для отображения заработанного опыта
   totalXpGained: number = 0;
   routesCompleted: number = 0;
 
-  // Для уведомлений
   notification: { show: boolean; message: string } = {
     show: false,
     message: '',
@@ -61,22 +58,32 @@ export class WorkoutComponent implements OnInit {
 
       achievements: [
         {
-          name: '🦾 Hang board exercises',
+          name: '🦾 Grip strenght',
           description: 'Improve finger strength',
-          progress: 'Achievement progress: +50',
-          xpValue: 50,
+          progressDescription: 'Achievement progress: +50',
+          progress: 0,
+          xpReward: 50,
         },
         {
           name: '🧩 Boulder problems',
           description: 'Focus on reading routes, finding solutions',
-          progress: 'Achievement progress: +50',
-          xpValue: 50,
+          progressDescription: 'Achievement progress: +50',
+          progress: 0,
+          xpReward: 50,
         },
         {
-          name: '🧭 Complete new routes',
+          name: '🧭 Route master',
           description: '',
-          progress: 'Achievement progress: +50',
-          xpValue: 50,
+          progressDescription: 'Achievement progress: +50',
+          progress: 0,
+          xpReward: 50,
+        },
+        {
+          name: '🔄 Endurance expert',
+          progressDescription: 'Achievement progress + 50',
+          description: 'Maintain climbing stamina for longer sessions.',
+          progress: 0,
+          xpReward: 80,
         },
       ],
 
@@ -93,7 +100,6 @@ export class WorkoutComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // Инициализация
     this.workouts[0].exercises.forEach((exercise) => {
       this.completedExercises[exercise.name] = false;
     });
@@ -137,7 +143,6 @@ export class WorkoutComponent implements OnInit {
     if (!this.completedExercises[exercise.name]) {
       this.completedExercises[exercise.name] = true;
 
-      // Добавляем опыт
       const xpAmount =
         exercise.xpValue ||
         parseInt(exercise.xpReward?.replace('XP + ', '')) ||
@@ -145,12 +150,10 @@ export class WorkoutComponent implements OnInit {
       this.totalXpGained += xpAmount;
       this.workouts[0].progress.totalXpGained += xpAmount;
 
-      // Показываем уведомление
       this.showNotification(`Completed: ${exercise.name}! +${xpAmount} XP`);
     }
   }
 
-  // Добавляем метод для выполнения достижения
   completeAchievement(achievement: any) {
     if (!this.isRunning) {
       this.showNotification('Start the timer first!');
@@ -167,14 +170,12 @@ export class WorkoutComponent implements OnInit {
       this.routesCompleted++;
       this.workouts[0].progress.routesCompleted++;
 
-      // Показываем уведомление
       this.showNotification(
         `Achievement: ${achievement.name}! +${xpAmount} XP`
       );
     }
   }
 
-  // Метод для отображения уведомлений
   showNotification(message: string) {
     this.notification = { show: true, message };
 
@@ -184,9 +185,7 @@ export class WorkoutComponent implements OnInit {
     }, 3000);
   }
 
-  // Завершение тренировки и сохранение опыта
   completeWorkout() {
-    // Проверяем, выполнено ли хотя бы одно упражнение
     const hasCompletedExercises = Object.values(this.completedExercises).some(
       (completed) => completed
     );
@@ -199,12 +198,11 @@ export class WorkoutComponent implements OnInit {
       return;
     }
 
-    // Добавляем бонус за выполнение всех упражнений
     const allExercisesCompleted = Object.values(this.completedExercises).every(
       (completed) => completed
     );
     if (allExercisesCompleted) {
-      const bonusXP = Math.round(this.totalXpGained * 0.25); // 25% бонус
+      const bonusXP = Math.round(this.totalXpGained * 0.25);
       this.totalXpGained += bonusXP;
       this.workouts[0].progress.totalXpGained += bonusXP;
       this.showNotification(
@@ -212,7 +210,6 @@ export class WorkoutComponent implements OnInit {
       );
     }
 
-    // Сохраняем полученный опыт в CharacterService
     try {
       this.characterService.addExperience(this.totalXpGained);
 
@@ -229,7 +226,6 @@ export class WorkoutComponent implements OnInit {
 
     this.stopTimer();
 
-    // Переходим на страницу профиля персонажа
     setTimeout(() => {
       this.router.navigate(['/character-profile']);
     }, 1500);

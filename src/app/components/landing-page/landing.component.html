@@ -20,6 +20,9 @@
 
   <div class="content visible">
     <h2>Choose your path</h2>
+    <button (click)="getStarted()" class="btn-primary">
+      Create your character
+    </button>
     <div class="cards">
       <div class="card">
         <img src="/assets/running-avatar.jpg" alt="Runner" />
@@ -40,14 +43,11 @@
         </p>
       </div>
     </div>
-    <button (click)="getStarted()" class="btn-primary">
-      Create your character
-    </button>
   </div>
 </div>
 
 <div class="about-section">
-  <div class="about-mountain"></div>
+  <!-- <div class="about-mountain"></div> -->
 
   <div class="about">
     <h1>About your adventure</h1>
@@ -94,7 +94,9 @@
     </div>
 
     <div class="cta-container">
-      <button class="cta-button">START YOUR JOURNEY</button>
+      <button class="cta-button" (click)="getStarted()">
+        START YOUR JOURNEY
+      </button>
     </div>
   </div>
 </div>

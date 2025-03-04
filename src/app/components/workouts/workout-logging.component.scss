@@ -1,18 +1,20 @@
 .workout-table {
-  gap: 20px;
-  align-items: start;
+  display: grid;
+  grid-template-rows: auto auto auto auto 1fr auto;
+  gap: 10px;
   background: linear-gradient(135deg, #1e1724, #3b2d4a);
   min-height: 100vh;
-  padding: 40px;
+  padding: 20px;
   font-family: "Fira Sans", sans-serif;
   font-weight: 400;
   color: #ffffff;
+  overflow: hidden;
 }
 
 .headers {
   background: rgba(8, 6, 9, 0.3);
   border-radius: 10px;
-  padding: 20px;
+  padding: 15px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -20,55 +22,28 @@
 
 .workout-title {
   color: #89919e;
+  margin: 0;
 }
 
-.buttons {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  gap: 20px;
-  margin-top: 1em;
-}
-
-.workout-btn {
-  font-family: "Fira Sans", sans-serif;
-  font-weight: 600;
-  font-size: 1em;
-  cursor: pointer;
-  margin-top: 1em;
-  border-radius: 5px;
-  border: none;
-  padding: 10px;
-}
-
-span {
-  color: #89919e;
-  font-weight: 200;
+h2 {
+  margin: 10px 0 5px 0;
+  text-align: center;
 }
 
 .workout-description {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 10px;
-}
-
-h2,
-h3 {
+  display: block;
   text-align: center;
-  margin-top: 0.5em;
+  color: #89919e;
+  font-weight: 200;
+  margin-bottom: 10px;
 }
 
 .workout-challanges {
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  margin: 1em;
-}
-
-.workout-challanges span {
-  text-align: left;
-  width: 100%;
+  flex-direction: column;
+  overflow-y: auto;
+  max-height: calc(100vh - 300px);
+  padding-right: 5px;
 }
 
 .exercises-list {
@@ -76,48 +51,83 @@ h3 {
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  margin: 0.3em 2em;
-  padding: 20px;
+  margin: 0.3em 0;
+  padding: 15px;
   background: rgba(8, 6, 9, 0.3);
   border-radius: 10px;
-  height: 100px;
+  height: auto;
+  min-height: 100px;
   gap: 5px;
   cursor: pointer;
 }
 
-.progress-info {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+.exercises-list h2 {
+  margin: 0 0 5px 0;
+  font-size: 1.1em;
 }
 
-.progress-info h2 {
-  margin-bottom: 0.5em;
+.exercises-list span {
+  display: block;
+  text-align: left;
+  width: 100%;
+  margin-bottom: 3px;
+}
+
+.achievements-challanges {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.achievements-challanges h3 {
+  text-align: center;
+  margin: 10px 0;
+}
+
+.progress-info {
+  margin-top: 15px;
+  padding: 10px;
 }
 
 .progress {
-  justify-content: center;
-  align-items: flex-start;
-  border-radius: 10px;
-  margin: 0.3em 2em;
-  padding: 20px;
+  margin: 0.3em auto;
+  padding: 15px;
   background: rgba(8, 6, 9, 0.3);
   font-weight: 500;
-  font-size: 1.3em;
-  width: 200px;
+  font-size: 1.1em;
+  width: 80%;
+  border-radius: 10px;
+  text-align: center;
 }
 
-/* Добавьте эти стили к вашему существующему CSS */
+.buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 15px;
+  padding: 15px;
+  margin-top: auto;
+  position: sticky;
+  bottom: 0;
+}
 
-/* Стиль для завершенных упражнений */
+.workout-btn {
+  font-family: "Fira Sans", sans-serif;
+  font-weight: 600;
+  font-size: 1em;
+  cursor: pointer;
+  border-radius: 5px;
+  border: none;
+  padding: 12px 20px;
+}
+
+/* Existing styles for completion, etc. */
 .exercises-list.completed {
   background: rgba(90, 63, 118, 0.6) !important;
   border-left: 4px solid #b983ff;
   position: relative;
 }
 
-/* Индикатор статуса упражнения */
 .exercise-status {
   position: absolute;
   top: 10px;
@@ -134,7 +144,6 @@ h3 {
   font-weight: bold;
 }
 
-/* Уведомление при выполнении упражнения */
 .notification {
   position: fixed;
   top: 20px;
@@ -170,11 +179,9 @@ h3 {
   }
 }
 
-/* Модификация существующих стилей */
 .exercises-list {
   position: relative;
   transition: all 0.3s ease;
-  cursor: pointer;
 }
 
 .exercises-list:hover {
@@ -182,8 +189,11 @@ h3 {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Отключенные кнопки */
 .workout-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.workout-description {
+  color: #ffe068;
 }
