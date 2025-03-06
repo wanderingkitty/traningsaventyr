@@ -115,24 +115,21 @@
       "
     >
       <h3>✨ Special Abilities</h3>
-      <ul class="abilities-card">
-        <li *ngFor="let ability of character.specialAbilities">
-          <span class="ability-name">{{ ability.name || "Ability" }}</span>
-          <div class="progress-bar">
-            <div
-              class="progress-bar-inner"
-              [style.width.%]="ability.unlocked ? 100 : 0"
-            ></div>
-          </div>
-          <span class="locked" *ngIf="!ability.unlocked">LOCKED</span>
-          <span
-            class="ability-req"
-            *ngIf="!ability.unlocked && ability.requiredLevel"
-          >
+      <div *ngFor="let ability of character.specialAbilities">
+        <span class="ability-name">{{ ability.name || "Ability" }}</span>
+        <div class="progress-bar">
+          <div
+            class="progress-bar-inner"
+            [style.width.%]="ability.unlocked ? 100 : 0"
+          ></div>
+        </div>
+        <div class="ability-status" *ngIf="!ability.unlocked">
+          <span class="locked">LOCKED</span>
+          <span class="ability-req" *ngIf="ability.requiredLevel">
             Unlocks at Level {{ ability.requiredLevel }}
           </span>
-        </li>
-      </ul>
+        </div>
+      </div>
     </div>
 
     <h3>🔼 Next Level</h3>

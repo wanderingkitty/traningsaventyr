@@ -144,7 +144,20 @@ export class CharacterProfileComponent implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/character-creation']);
+    // Очищаем выбранного персонажа из localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('selectedCharacter');
+    }
+
+    // Проверяем, авторизован ли пользователь
+    const currentUser = this.authService.getCurrentUser();
+
+    if (currentUser) {
+      this.router.navigate(['/character-creation']);
+    } else {
+      // Если пользователь не авторизован, перенаправляем на страницу входа
+      this.router.navigate(['/login']);
+    }
   }
 
   onLogout() {

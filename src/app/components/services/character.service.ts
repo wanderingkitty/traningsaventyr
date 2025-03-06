@@ -90,11 +90,22 @@ export class CharacterService {
       character.avatar = this.getDefaultAvatarForClass(character.name);
     }
 
-    return this.http.put(`${this.apiUrl}/${profileId}`, {
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser) {
+      return of({ error: 'No user logged in' });
+    }
+    const userId = currentUser.userId || currentUser.name;
+
+    // Включаем characterData в объект progress
+    const progressData = {
+      ...this.characterProgressSubject.value,
       selectedCharacterName: character.name,
-      characterData: character,
-      progress: this.characterProgressSubject.value,
-      updatedAt: new Date(),
+    };
+
+    console.log('Sending progress update:', userId, progressData);
+
+    return this.http.put(`${this.apiUrl}/progress/${userId}`, {
+      progress: progressData,
     });
   }
 

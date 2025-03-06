@@ -90,7 +90,6 @@ export class LandingComponent implements OnInit {
       trees.style.transform = `scale(${treeScale}) translateY(${treeY}px)`;
     }
   }
-
   getStarted() {
     console.log('getStarted clicked');
     const currentUser = this.authService.getCurrentUser();

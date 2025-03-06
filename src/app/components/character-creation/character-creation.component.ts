@@ -6,7 +6,7 @@ import { CharacterService } from '../services/character.service';
 import { AuthService } from '../services/auth.service';
 
 @Component({
-  selector: 'character-creation-page',
+  selector: 'app-character-creation',
   templateUrl: './character-creation.component.html',
   styleUrls: ['./character-creation.component.scss'],
   standalone: true,
@@ -18,6 +18,7 @@ export class CharacterCreationComponent implements OnInit {
     private characterService: CharacterService,
     private authService: AuthService
   ) {}
+  currentYear: number = new Date().getFullYear();
 
   characters: Character[] = [
     {
@@ -95,13 +96,11 @@ export class CharacterCreationComponent implements OnInit {
           progress: 0,
           xpReward: 100,
         },
-
         {
           description: 'Reach a height of 10 meters',
           progress: 0,
           xpReward: 120,
         },
-
         {
           description: 'Complete a challenging route without falling',
           progress: 0,
@@ -167,12 +166,62 @@ export class CharacterCreationComponent implements OnInit {
           xpReward: 70,
           completed: false,
         },
+        {
+          name: '🏃 Sprint champion',
+          description: 'Achieve your best speed record.',
+          progress: 0,
+          xpReward: 65,
+          completed: false,
+        },
+        {
+          name: '🌄 Hill conqueror',
+          description: 'Master running uphill.',
+          progress: 0,
+          xpReward: 80,
+          completed: false,
+        },
+        {
+          name: '🌱 Trail blazer',
+          description: 'Explore off-road running paths.',
+          progress: 0,
+          xpReward: 75,
+          completed: false,
+        },
+        {
+          name: '🏁 Race finisher',
+          description: 'Complete a virtual race.',
+          progress: 0,
+          xpReward: 90,
+          completed: false,
+        },
+        {
+          name: '🔄 Consistency champion',
+          description: 'Run regularly for a whole week.',
+          progress: 0,
+          xpReward: 85,
+          completed: false,
+        },
       ],
       challenges: [
         {
           description: 'Run 3 different routes',
           progress: 0,
           xpReward: 80,
+        },
+        {
+          description: 'Complete a 5km run',
+          progress: 0,
+          xpReward: 100,
+        },
+        {
+          description: 'Maintain target heart rate for 20 minutes',
+          progress: 0,
+          xpReward: 120,
+        },
+        {
+          description: 'Run every morning for a week',
+          progress: 0,
+          xpReward: 150,
         },
       ],
       specialAbilities: [
@@ -229,12 +278,62 @@ export class CharacterCreationComponent implements OnInit {
           xpReward: 55,
           completed: false,
         },
+        {
+          name: '🌈 Flow sequence',
+          description: 'Master flowing between poses.',
+          progress: 0,
+          xpReward: 75,
+          completed: false,
+        },
+        {
+          name: '🧠 Meditation adept',
+          description: 'Achieve deeper meditation states.',
+          progress: 0,
+          xpReward: 80,
+          completed: false,
+        },
+        {
+          name: '🌙 Moonlight practice',
+          description: 'Complete evening yoga sessions.',
+          progress: 0,
+          xpReward: 65,
+          completed: false,
+        },
+        {
+          name: '☀️ Morning ritual',
+          description: 'Establish a consistent morning routine.',
+          progress: 0,
+          xpReward: 70,
+          completed: false,
+        },
+        {
+          name: '🔄 Balanced life',
+          description: 'Integrate yoga into daily life.',
+          progress: 0,
+          xpReward: 90,
+          completed: false,
+        },
       ],
       challenges: [
         {
           description: 'Hold a pose for 1 min',
           progress: 0,
           xpReward: 70,
+        },
+        {
+          description: 'Complete a full sun salutation sequence',
+          progress: 0,
+          xpReward: 90,
+        },
+        {
+          description: 'Meditate for 10 minutes daily for a week',
+          progress: 0,
+          xpReward: 120,
+        },
+        {
+          description: 'Master three advanced poses',
+          progress: 0,
+          xpReward: 130,
         },
       ],
       specialAbilities: [
@@ -259,7 +358,6 @@ export class CharacterCreationComponent implements OnInit {
       ],
     },
   ];
-
   selectedCharacter: Character = this.characters[0];
   loading = true;
   existingProfile: CharacterProfile | null = null;
@@ -271,9 +369,33 @@ export class CharacterCreationComponent implements OnInit {
       this.router.navigate(['/login']);
       return;
     }
+
+    // Проверяем localStorage на наличие сохраненного персонажа для текущего пользователя
+    if (typeof window !== 'undefined') {
+      const savedCharacter = localStorage.getItem(
+        `character_${currentUser.name}`
+      );
+
+      if (savedCharacter) {
+        this.selectedCharacter = JSON.parse(savedCharacter);
+
+        // Проверяем, нужно ли автоматически переходить
+        const shouldAutoNavigate =
+          localStorage.getItem('autoNavigate') === 'true';
+
+        if (shouldAutoNavigate) {
+          // Автоматически переходим на страницу профиля
+          this.continue();
+
+          // Сбрасываем флаг автоперехода
+          localStorage.removeItem('autoNavigate');
+          return;
+        }
+      }
+    }
+
     this.loadExistingProfile();
   }
-
   loadExistingProfile() {
     const currentUser = this.authService.getCurrentUser();
     if (!currentUser) return;
@@ -321,15 +443,15 @@ export class CharacterCreationComponent implements OnInit {
       return;
     }
 
+    // Сохраняем персонажа для текущего пользователя
     if (typeof window !== 'undefined') {
       localStorage.setItem(
-        'selectedCharacter',
+        `character_${currentUser.name}`,
         JSON.stringify(this.selectedCharacter)
       );
     }
 
     if (this.existingProfile) {
-      // Обновляем существующий профиль
       this.characterService
         .updateProfile(
           this.existingProfile._id as string,
@@ -346,7 +468,6 @@ export class CharacterCreationComponent implements OnInit {
           },
         });
     } else {
-      // Создаем новый профиль
       this.characterService.createProfile(this.selectedCharacter).subscribe({
         next: () => {
           this.router.navigate(['/character-profile'], {

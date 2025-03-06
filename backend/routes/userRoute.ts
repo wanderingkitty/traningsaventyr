@@ -139,4 +139,46 @@ userRouter.post('/signup', async (req, res) => {
   }
 });
 
+// Добавьте этот маршрут к вашему userRouter
+userRouter.patch('/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const updateData = req.body;
+
+    console.log(`Updating user ${userId} with data:`, updateData);
+
+    await connect();
+    const userCollection = getDb().collection('users');
+
+    const result = await userCollection.updateOne(
+      { userId },
+      { $set: updateData }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Пользователь не найден',
+      });
+    }
+
+    return res.status(200).json({
+      status: 'success',
+      message: 'Пользователь успешно обновлен',
+      data: {
+        modifiedCount: result.modifiedCount,
+      },
+    });
+  } catch (error) {
+    console.error('Update user error:', error);
+    return res.status(500).json({
+      status: 'error',
+      message: 'Ошибка сервера при обновлении пользователя',
+      details: {
+        error: 'Пожалуйста, попробуйте позже',
+      },
+    });
+  }
+});
+
 export { userRouter };

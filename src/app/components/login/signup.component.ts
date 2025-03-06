@@ -20,10 +20,6 @@ export class SignupComponent {
   constructor(private authService: AuthService, private router: Router) {}
 
   async onSignup() {
-    console.log('onSignup called with:', {
-      username: this.username,
-      password: this.password,
-    });
     if (this.username.trim().length < 3) {
       this.message = 'Username must be at least 3 characters long';
       return;
@@ -52,5 +48,9 @@ export class SignupComponent {
     } finally {
       this.isRegistering = false;
     }
+  }
+
+  onMainScreen() {
+    this.router.navigate(['/']);
   }
 }

@@ -14,6 +14,9 @@ export interface WorkoutAchievement {
   xpValue?: number;
   xpReward: number;
   completed?: boolean;
+  target: number;
+  currentValue: number;
+  unit: string;
 }
 
 export interface WorkoutProgress {

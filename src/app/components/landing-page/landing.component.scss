@@ -50,7 +50,8 @@
   h1 {
     font-size: 7em;
     margin-bottom: 1rem;
-    text-shadow: 0 0 15px rgba(255, 224, 104, 0.3);
+    text-shadow: 0 0 15px rgba(255, 224, 104, 0.8),
+      0 0 30px rgba(255, 150, 50, 0.6), 0 0 45px rgba(133, 45, 60, 0.4);
   }
 
   p {

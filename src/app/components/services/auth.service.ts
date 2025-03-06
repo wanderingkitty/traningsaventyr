@@ -77,12 +77,31 @@ export class AuthService {
   }
 
   logout() {
+    const savedCharacter = localStorage.getItem('selectedCharacter');
+    const savedUser = localStorage.getItem('user');
+
     if (typeof window !== 'undefined') {
+      // Очищаем токен и текущего пользователя
       localStorage.removeItem('token');
       localStorage.removeItem('user');
+
+      // Устанавливаем флаг для автоматического перехода
+      localStorage.setItem('autoNavigate', 'true');
     }
+
     this.currentUserSubject.next(null);
     this.router.navigate(['/login']);
+
+    // Если у нас есть данные о персонаже и пользователе,
+    // сохраняем их для будущего использования
+    if (savedCharacter && savedUser) {
+      const userData = JSON.parse(savedUser);
+
+      // Сохраняем привязку персонажа к пользователю в localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(`character_${userData.name}`, savedCharacter);
+      }
+    }
   }
 
   getCurrentUser() {
