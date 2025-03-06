@@ -27,6 +27,7 @@ export interface CharacterStats {
 }
 
 export interface Character {
+  _id: string;
   name: string;
   level: number;
   xp: number;
@@ -45,7 +46,7 @@ export interface CharacterProfile {
   username?: string;
   selectedCharacterName: string;
   characterData: Character;
-  progress?: {
+  progress: {
     level: number;
     experience: number;
     experienceToNextLevel: number;

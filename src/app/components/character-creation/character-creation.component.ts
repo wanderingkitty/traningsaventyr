@@ -22,6 +22,7 @@ export class CharacterCreationComponent implements OnInit {
 
   characters: Character[] = [
     {
+      _id: 'ascender-template',
       name: 'Ascender',
       level: 1,
       xp: 0,
@@ -134,6 +135,7 @@ export class CharacterCreationComponent implements OnInit {
       ],
     },
     {
+      _id: 'runner-template',
       name: 'Runner',
       level: 1,
       xp: 0,
@@ -246,6 +248,7 @@ export class CharacterCreationComponent implements OnInit {
       ],
     },
     {
+      _id: 'zen-warrior-template',
       name: 'Zen Warrior',
       level: 1,
       xp: 0,
@@ -467,6 +470,18 @@ export class CharacterCreationComponent implements OnInit {
             console.error('Error updating profile:', error);
           },
         });
+      if (
+        this.selectedCharacter._id &&
+        this.selectedCharacter._id.endsWith('-template')
+      ) {
+        this.selectedCharacter._id = `${
+          this.selectedCharacter.name
+        }_${Date.now()}`;
+      } else if (!this.selectedCharacter._id) {
+        this.selectedCharacter._id = `${
+          this.selectedCharacter.name
+        }_${Date.now()}`;
+      }
     } else {
       this.characterService.createProfile(this.selectedCharacter).subscribe({
         next: () => {
@@ -479,5 +494,9 @@ export class CharacterCreationComponent implements OnInit {
         },
       });
     }
+  }
+
+  onMainScreen() {
+    this.router.navigate(['/']);
   }
 }

@@ -61,9 +61,12 @@ profileRouter.post('/', async (req, res) => {
 profileRouter.put('/progress/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
-    const { progress } = req.body;
+    const { progress, characterData } = req.body;
 
-    console.log(`Received progress update for user ${userId}:`, progress);
+    console.log(`Received profile update for user ${userId}:`, {
+      progress,
+      characterData,
+    });
 
     if (!progress) {
       return res.status(400).json({ message: 'Progress data is required' });
@@ -79,19 +82,28 @@ profileRouter.put('/progress/:userId', async (req, res) => {
       return res.status(404).json({ message: 'Profile not found' });
     }
 
-    // Обновляем прогресс
+    // Подготавливаем данные для обновления
+    const updateData: any = {
+      progress,
+      updatedAt: new Date(),
+    };
+
+    // Если переданы данные персонажа, также обновляем их
+    if (characterData) {
+      updateData.characterData = characterData;
+      updateData.selectedCharacterName = characterData.name;
+    }
+
+    // Обновляем профиль
     const result = await profileCollection.updateOne(
       { userId },
       {
-        $set: {
-          progress,
-          updatedAt: new Date(),
-        },
+        $set: updateData,
       }
     );
 
     res.json({
-      message: 'Progress updated successfully',
+      message: 'Profile updated successfully',
       modifiedCount: result.modifiedCount,
     });
   } catch (error) {

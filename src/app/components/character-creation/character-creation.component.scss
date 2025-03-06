@@ -179,6 +179,32 @@
   text-align: center;
 }
 
+.goBack-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  color: #e0d6f5;
+  border: 1px solid rgba(180, 140, 255, 0.3);
+  border-radius: 8px;
+  padding: 8px 15px;
+  font-family: "Fira Sans", serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 1;
+
+  &:hover {
+    background: rgba(90, 63, 118, 0.4);
+    border-color: rgba(180, 140, 255, 0.5);
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
 .continue-button {
   background: linear-gradient(135deg, #3b2b4e, #5a3f76);
   color: #e0d6f5;

@@ -30,6 +30,67 @@ export class CharacterService {
     this.loadCharacterProgress();
   }
 
+  // Метод для выбора текущего персонажа
+  selectCharacter(character: Character) {
+    console.log('Selecting character:', character.name);
+
+    // Сохраняем выбранного персонажа в localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('selectedCharacter', JSON.stringify(character));
+    }
+  }
+
+  // Метод для сохранения персонажа
+  saveCharacter(character: Character): void {
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser) return;
+
+    const userId = currentUser.userId || currentUser.name;
+    if (!userId) return;
+
+    // Сохраняем персонажа в localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(
+        `character_${userId}_${character.name}`,
+        JSON.stringify(character)
+      );
+
+      // Также сохраняем как выбранного персонажа
+      localStorage.setItem('selectedCharacter', JSON.stringify(character));
+    }
+  }
+
+  // Метод для получения Observable прогресса для конкретного персонажа
+  getCharacterProgress$(
+    character: Character | string
+  ): Observable<CharacterProgress> {
+    // Используем существующий BehaviorSubject
+    return this.characterProgress$;
+  }
+
+  // Метод для обновления Subject прогресса
+  updateProgressSubject(
+    characterName: string,
+    progress: CharacterProgress
+  ): void {
+    console.log(
+      'Manually updating progress subject for',
+      characterName,
+      ':',
+      progress
+    );
+    this.characterProgressSubject.next(progress);
+
+    // Сохраняем в localStorage
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser && typeof window !== 'undefined') {
+      localStorage.setItem(
+        `character_progress_${currentUser.userId || currentUser.name}`,
+        JSON.stringify(progress)
+      );
+    }
+  }
+
   // Новый метод для получения профиля пользователя по имени
   getUserProfile(username: string): Observable<CharacterProfile | null> {
     if (!username) {
@@ -85,7 +146,8 @@ export class CharacterService {
     return this.http.post(this.apiUrl, profileData);
   }
 
-  updateProfile(profileId: string, character: Character) {
+  // Обновленный метод updateProfile для работы с CharacterProfileComponent
+  updateProfile(characterName: string, character: Character): Observable<any> {
     if (!character.avatar) {
       character.avatar = this.getDefaultAvatarForClass(character.name);
     }
@@ -96,17 +158,34 @@ export class CharacterService {
     }
     const userId = currentUser.userId || currentUser.name;
 
-    // Включаем characterData в объект progress
-    const progressData = {
-      ...this.characterProgressSubject.value,
+    // Подготавливаем данные для отправки
+    const profileData = {
+      userId: userId,
+      username: currentUser.name,
       selectedCharacterName: character.name,
+      characterData: character,
+      progress: this.characterProgressSubject.value,
     };
 
-    console.log('Sending progress update:', userId, progressData);
+    console.log(
+      `Updating profile for user ${userId}, character ${characterName}:`,
+      profileData
+    );
 
-    return this.http.put(`${this.apiUrl}/progress/${userId}`, {
-      progress: progressData,
-    });
+    // Отправляем запрос на сервер
+    return this.http
+      .put(`${this.apiUrl}/${userId}/characters/${characterName}`, profileData)
+      .pipe(
+        tap((response) => {
+          console.log('Profile update response:', response);
+          // Обновляем локальные данные после успешного обновления на сервере
+          this.saveCharacter(character);
+        }),
+        catchError((error) => {
+          console.error('Error updating profile:', error);
+          return of({ error: 'Failed to update profile' });
+        })
+      );
   }
 
   private loadCharacterProgress() {

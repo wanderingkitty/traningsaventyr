@@ -5,6 +5,7 @@
   background: linear-gradient(135deg, #1e1724, #3b2d4a);
   min-height: 100vh;
   padding: 20px;
+  padding-top: 140px;
   font-family: "Fira Sans", sans-serif;
   font-weight: 400;
   color: #ffffff;
@@ -12,14 +13,25 @@
 }
 
 .headers {
-  background: rgba(8, 6, 9, 0.4);
-  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    #1e1724,
+    #3b2d4a
+  ); /* Match the background color */
+  border-radius: 0; /* Remove border radius for full-width look */
   padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%; /* Ensure full width */
+  z-index: 100;
+  margin: 0; /* Remove the margins */
+  height: 140px;
   overflow: hidden;
 
   &::before {
@@ -244,26 +256,35 @@ h2 {
 }
 
 .progress-info {
-  margin-top: 20px;
-  padding: 15px;
-  background: rgba(8, 6, 9, 0.4);
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  position: fixed; /* Keeps it always visible */
+  bottom: 0; /* Sticks it to the bottom */
+  left: 0;
+  width: 100%; /* Full width */
+  z-index: 99; /* Keeps it above other content */
+  padding: 5px;
+  background: linear-gradient(135deg, #1e1724, #3b2d4a);
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.3);
+  height: 130px;
 
   h2 {
     margin-top: 0;
     margin-bottom: 15px;
     font-size: 1.4rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
 
 .progress {
-  margin: 0.8em auto;
-  padding: 15px;
+  margin: 5px auto;
+  padding: 5px;
   background: rgba(90, 63, 118, 0.2);
   font-weight: 500;
   font-size: 1.1em;
-  width: 90%;
+  width: 40%;
   border-radius: 10px;
   text-align: center;
   border-left: 4px solid #7a52a1;
@@ -281,25 +302,21 @@ h2 {
   justify-content: center;
   gap: 15px;
   padding: 20px 15px;
-  margin-top: auto;
+  margin-top: 55px;
   position: sticky;
   bottom: 0;
-  background: linear-gradient(
-    0deg,
-    rgba(30, 23, 36, 0.95) 0%,
-    rgba(30, 23, 36, 0) 100%
-  );
+
   z-index: 10;
 }
 
 .workout-btn {
   font-family: "Fira Sans", sans-serif;
   font-weight: 600;
-  font-size: 1.1em;
+  font-size: 1em;
   cursor: pointer;
   border-radius: 10px;
   border: 2px solid rgba(180, 140, 255, 0.4);
-  padding: 14px 24px;
+  padding: 7px 14px;
   background: linear-gradient(135deg, #3b2b4e, #5a3f76);
   color: #e0d6f5;
   transition: all 0.3s ease;
@@ -363,24 +380,6 @@ h2 {
   position: relative;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 
-  &::after {
-    content: "✓";
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 25px;
-    height: 25px;
-    background: linear-gradient(135deg, #27ae60, #2ecc71);
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 14px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  }
-
   &:hover {
     transform: translateY(-2px);
   }
@@ -400,12 +399,6 @@ h2 {
   padding: 4px 8px;
   border-radius: 4px;
   animation: pulse 2s infinite;
-}
-
-.completed-check {
-  color: #2ecc71;
-  font-weight: bold;
-  display: none; /* Hide this as we're using the ::after checkmark */
 }
 
 .notification {

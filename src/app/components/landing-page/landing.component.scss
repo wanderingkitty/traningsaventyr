@@ -154,24 +154,6 @@ button {
   border: 3px solid rgba(255, 255, 255, 0.3);
 }
 
-.sky-background {
-  filter: contrast(180%) brightness(130%) opacity(50%);
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 1;
-  transition: transform 0.3s ease-out;
-  clip-path: polygon(0 0, 100% 0, 100% 100vh, 0 100vh);
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-}
-
 .trees {
   position: absolute;
   bottom: 0;
@@ -241,14 +223,6 @@ button {
 
 .about-section .sky-background {
   display: none;
-}
-
-.sky-background {
-  display: none;
-}
-
-.sky-background-visible .sky-background {
-  display: block;
 }
 
 .about-mountain {
@@ -326,4 +300,44 @@ button {
 
 .nav-button:hover {
   background-color: #9a3547;
+}
+
+.sky-background {
+  position: fixed;
+  filter: contrast(200%) brightness(130%) opacity(60%);
+  transition: transform 0.3s ease-out;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none; // Важно: делает фон "прозрачным" для взаимодействий
+  background: linear-gradient(
+    180deg,
+    rgba(102, 51, 153, 1) 0%,
+    rgba(51, 26, 77, 1) 50%,
+    rgba(25, 10, 38, 1) 100%
+  );
+
+  // Добавьте clip-path для ограничения видимости
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+  .stars {
+    fill: rgba(255, 255, 255, 1); // Максимальная белизна
+  }
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
 }

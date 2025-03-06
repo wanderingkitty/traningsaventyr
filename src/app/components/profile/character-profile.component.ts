@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { CharacterService } from '../services/character.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { User } from 'backend/models/user';
-import { Character } from 'backend/models/character';
+import { Character, CharacterProfile } from 'backend/models/character';
 
 @Component({
   selector: 'app-character-profile',
@@ -14,122 +14,393 @@ import { Character } from 'backend/models/character';
   standalone: true,
   imports: [CommonModule],
 })
-export class CharacterProfileComponent implements OnInit {
+export class CharacterProfileComponent implements OnInit, OnDestroy {
   character?: Character;
+  characterProfile?: CharacterProfile;
   user$: Observable<User>;
+  progressSubscription: Subscription = new Subscription();
 
   constructor(
     private router: Router,
     private authService: AuthService,
-    private characterService: CharacterService
+    private characterService: CharacterService,
+    private cdr: ChangeDetectorRef
   ) {
     this.user$ = this.authService.currentUser$;
 
-    // Получаем персонажа из состояния навигации
+    // Get character from navigation state
     const navigation = this.router.getCurrentNavigation();
     this.character = navigation?.extras?.state?.['character'];
 
-    console.log('Initial character:', this.character);
-
-    // Если персонажа нет в состоянии, пробуем загрузить из localStorage
-    if (!this.character && typeof window !== 'undefined') {
-      const savedCharacter = localStorage.getItem('selectedCharacter');
-      if (savedCharacter) {
-        this.character = JSON.parse(savedCharacter);
-        console.log('Loaded character from localStorage:', this.character);
-      } else {
-        console.warn('No character found, redirecting...');
-        this.router.navigate(['/character-creation']);
-      }
-    } else if (this.character && typeof window !== 'undefined') {
-      // Сохраняем персонажа в localStorage для будущего использования
-      localStorage.setItem('selectedCharacter', JSON.stringify(this.character));
-    }
+    console.log('Initial character from navigation state:', this.character);
   }
 
   ngOnInit() {
-    console.log('Component initialized');
+    console.log('Character profile component initialized');
 
-    // Добавьте эту строку для проверки содержимого localStorage
-    console.log(
-      'LocalStorage character:',
-      JSON.parse(localStorage.getItem('selectedCharacter') || '{}')
-    );
+    // Загрузка персонажа из localStorage (если не был передан через навигацию)
+    this.loadCharacterFromStorage();
 
     if (this.character) {
-      console.log(
-        'Number of achievements:',
-        this.character.achievements?.length
-      );
-      console.log('All achievements:', this.character.achievements);
+      // Подписываемся на обновления прогресса для конкретного персонажа
+      this.progressSubscription = this.characterService
+        .getCharacterProgress$(this.character)
+        .subscribe((progress) => {
+          console.log(
+            'Progress update received for character',
+            this.character?.name,
+            ':',
+            progress
+          );
+
+          if (this.character && this.characterProfile) {
+            // Обновляем данные в characterProfile.progress
+            this.characterProfile.progress = { ...progress };
+
+            // Также обновляем данные в character и characterProfile.characterData для совместимости
+            this.character.level = progress.level;
+            this.character.xp = progress.experience;
+            this.character.xpToNextLevel = progress.experienceToNextLevel;
+
+            if (this.characterProfile.characterData) {
+              this.characterProfile.characterData.level = progress.level;
+              this.characterProfile.characterData.xp = progress.experience;
+              this.characterProfile.characterData.xpToNextLevel =
+                progress.experienceToNextLevel;
+            }
+
+            console.log(
+              'Updated character profile for',
+              this.character.name,
+              ':',
+              this.characterProfile
+            );
+
+            // Запускаем обнаружение изменений
+            this.cdr.detectChanges();
+          }
+        });
     }
 
-    // Инициализируем необходимые свойства, если они не определены
+    // Инициализируем свойства персонажа
     this.initializeCharacterProperties();
 
-    // Здесь можно получить обновленную информацию о прогрессе с сервера
+    // Загружаем свежие данные о прогрессе с сервера
+    this.loadUserProgress();
+
+    // Обновляем достижения
     this.updateAchievementProgress();
+
+    // Нормализуем достижения для правильного отображения
+    this.normalizeAchievements();
   }
 
-  // Новый метод для инициализации свойств персонажа
-  private initializeCharacterProperties() {
-    if (this.character) {
-      // Инициализируем массивы, если они не определены
-      if (!this.character.achievements) {
-        this.character.achievements = [];
-      }
-
-      if (!this.character.challenges) {
-        this.character.challenges = [];
-      }
-
-      if (!this.character.specialAbilities) {
-        this.character.specialAbilities = [];
-      }
-
-      // Инициализируем статистику, если она не определена
-      if (!this.character.stats) {
-        this.character.stats = {
-          totalWorkouts: 0,
-          totalXpGained: 0,
-        };
-      }
-
-      // Устанавливаем значения по умолчанию для численных свойств, если они не определены
-      if (this.character.xp === undefined) this.character.xp = 0;
-      if (this.character.level === undefined) this.character.level = 1;
-      if (this.character.xpToNextLevel === undefined)
-        this.character.xpToNextLevel = 1000;
+  ngOnDestroy() {
+    // Отписываемся при уничтожении компонента
+    if (this.progressSubscription) {
+      this.progressSubscription.unsubscribe();
     }
   }
 
-  // Метод для обновления прогресса достижений
-  updateAchievementProgress() {
-    // Для примера добавим некоторый прогресс
-    if (this.character && this.character.achievements) {
-      const currentUser = this.authService.getCurrentUser();
+  // Загрузка персонажа из localStorage
+  loadCharacterFromStorage() {
+    if (!this.character && typeof window !== 'undefined') {
+      const savedCharacter = localStorage.getItem('selectedCharacter');
+      if (savedCharacter) {
+        try {
+          this.character = JSON.parse(savedCharacter);
+          console.log('Loaded character from localStorage:', this.character);
 
-      if (currentUser && currentUser.userId) {
-        // Пока нет реального API, просто обновим прогресс для демонстрации
-        this.character.achievements.forEach(
-          (achievement: any, index: number) => {
-            // Генерируем случайный прогресс для демонстрации
-            // В реальности здесь должны быть данные с сервера
-            const demoProgress = Math.min(
-              achievement.progress + Math.floor(Math.random() * 20),
-              100
-            );
-            achievement.progress = demoProgress;
+          // Инициализируем characterProfile после загрузки персонажа
+          if (this.character) {
+            const currentUser = this.authService.getCurrentUser();
+            this.characterProfile = {
+              userId: currentUser?.userId || '',
+              selectedCharacterName: this.character.name,
+              characterData: this.character,
+              progress: {
+                level: this.character.level || 1,
+                experience: this.character.xp || 0,
+                experienceToNextLevel: this.character.xpToNextLevel || 1000,
+              },
+            };
 
-            // Если прогресс достиг 100%, отмечаем как выполненное
-            achievement.completed = demoProgress >= 100;
+            // Устанавливаем текущего персонажа в сервисе
+            this.characterService.selectCharacter(this.character);
           }
-        );
+        } catch (error) {
+          console.error('Error parsing character from localStorage:', error);
+          this.router.navigate(['/character-creation']);
+        }
+      } else {
+        console.warn('No character found in localStorage, redirecting...');
+        this.router.navigate(['/character-creation']);
       }
+    } else if (this.character) {
+      // Если персонаж был получен из навигации, инициализируем characterProfile
+      const currentUser = this.authService.getCurrentUser();
+      this.characterProfile = {
+        userId: currentUser?.userId || '',
+        selectedCharacterName: this.character.name,
+        characterData: this.character,
+        progress: {
+          level: this.character.level || 1,
+          experience: this.character.xp || 0,
+          experienceToNextLevel: this.character.xpToNextLevel || 1000,
+        },
+      };
+
+      // Устанавливаем текущего персонажа в сервисе
+      this.characterService.selectCharacter(this.character);
     }
   }
 
-  // Метод, который будет применять данные о прогрессе из серверного ответа
+  // Загрузка прогресса с сервера
+  loadUserProgress() {
+    if (!this.character) {
+      console.warn('No character to load progress for');
+      return;
+    }
+
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser || !currentUser.name) {
+      console.warn('No current user found, cannot load profile');
+      return;
+    }
+
+    console.log('Requesting user profile for:', currentUser.name);
+
+    this.characterService.getUserProfile(currentUser.name).subscribe({
+      next: (profile) => {
+        if (!profile || !profile.characterData) {
+          console.warn('No profile data received from server');
+          return;
+        }
+
+        if (profile.characterData.name !== this.character?.name) {
+          console.warn(
+            'Profile data received from server does not match current character'
+          );
+          return;
+        }
+
+        console.log(
+          'Received profile from server for character',
+          this.character.name,
+          ':',
+          profile
+        );
+
+        // Сохраняем весь профиль
+        this.characterProfile = profile;
+
+        // Обновляем локальные данные персонажа
+        const originalAchievements = this.character?.achievements || [];
+
+        // Обновляем персонажа из профиля
+        this.character = profile.characterData;
+
+        // Убедимся, что уровень и опыт из прогресса синхронизированы с character
+        if (profile.progress) {
+          this.character.level = profile.progress.level;
+          this.character.xp = profile.progress.experience;
+          this.character.xpToNextLevel = profile.progress.experienceToNextLevel;
+        }
+
+        // Проверяем и обновляем достижения
+        // Проверяем и обновляем достижения
+        if (originalAchievements.length > 0 && this.character) {
+          if (!this.character.achievements) {
+            this.character.achievements = originalAchievements;
+          } else {
+            // Обновляем статусы достижений из оригинальных
+            originalAchievements.forEach((original) => {
+              if (original.completed && this.character) {
+                // добавляем проверку this.character здесь
+                const existingAchievement = this.character.achievements?.find(
+                  (a) => a.name === original.name
+                );
+                if (existingAchievement) {
+                  existingAchievement.completed = true;
+                  existingAchievement.progress = 100;
+                } else if (this.character.achievements) {
+                  // добавляем проверку achievements
+                  this.character.achievements.push(original);
+                }
+              }
+            });
+          }
+        }
+
+        // Сохраняем персонажа локально после обновления
+        this.characterService.saveCharacter(this.character);
+
+        // Обновляем Subject в сервисе для других компонентов
+        if (profile.progress) {
+          this.characterService.updateProgressSubject(
+            this.character.name,
+            profile.progress
+          );
+        }
+
+        // Нормализуем достижения после получения данных с сервера
+        this.normalizeAchievements();
+
+        // Запускаем обнаружение изменений
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error loading user profile:', error);
+      },
+    });
+  }
+
+  // Метод для нормализации достижений
+  normalizeAchievements() {
+    if (!this.character || !this.character.achievements) {
+      console.warn('No character or achievements to normalize');
+      return;
+    }
+
+    console.log('Normalizing achievements for character:', this.character.name);
+    console.log(
+      'Achievements before normalization:',
+      this.character.achievements
+    );
+
+    // Создаем новый массив для нормализованных достижений
+    const normalizedAchievements = this.character.achievements.map(
+      (achievement) => {
+        // Создаем копию достижения
+        const normalized = { ...achievement };
+
+        // Убедимся, что completed имеет тип boolean
+        if (typeof normalized.completed === 'string') {
+          normalized.completed = normalized.completed === 'true';
+        }
+
+        // Если completed не установлено, устанавливаем его в false
+        if (normalized.completed === undefined) {
+          normalized.completed = false;
+        }
+
+        // Устанавливаем прогресс в зависимости от статуса completed
+        if (normalized.completed === true) {
+          normalized.progress = 100;
+        } else if (
+          normalized.progress === undefined ||
+          normalized.progress === null
+        ) {
+          normalized.progress = 0;
+        }
+
+        return normalized;
+      }
+    );
+
+    // Заменяем массив достижений на нормализованный
+    this.character.achievements = normalizedAchievements;
+
+    // Обновляем данные в characterProfile
+    if (this.characterProfile?.characterData) {
+      this.characterProfile.characterData.achievements = [
+        ...normalizedAchievements,
+      ];
+    }
+
+    // Сохраняем персонажа с нормализованными достижениями
+    this.characterService.saveCharacter(this.character);
+
+    console.log(
+      'Achievements after normalization:',
+      this.character.achievements
+    );
+
+    // Принудительно обновляем отображение
+    this.cdr.detectChanges();
+  }
+
+  // Метод для инициализации свойств персонажа
+  private initializeCharacterProperties() {
+    if (!this.character) {
+      console.warn('Cannot initialize properties: Character is undefined');
+      return;
+    }
+
+    console.log('Initializing character properties for:', this.character.name);
+
+    // Initialize arrays if not defined
+    if (!this.character.achievements) {
+      this.character.achievements = [];
+    }
+
+    if (!this.character.challenges) {
+      this.character.challenges = [];
+    }
+
+    if (!this.character.specialAbilities) {
+      this.character.specialAbilities = [];
+    }
+
+    // Initialize stats if not defined
+    if (!this.character.stats) {
+      this.character.stats = {
+        totalWorkouts: 0,
+        totalXpGained: 0,
+      };
+    } else {
+      // Убедимся, что все необходимые свойства присутствуют
+      if (this.character.stats.totalWorkouts === undefined) {
+        this.character.stats.totalWorkouts = 0;
+      }
+      if (this.character.stats.totalXpGained === undefined) {
+        this.character.stats.totalXpGained = 0;
+      }
+    }
+
+    // Set default values for numeric properties if not defined
+    if (this.character.xp === undefined) this.character.xp = 0;
+    if (this.character.level === undefined) this.character.level = 1;
+    if (this.character.xpToNextLevel === undefined)
+      this.character.xpToNextLevel = 1000;
+  }
+
+  // Method to update achievement progress
+  updateAchievementProgress() {
+    if (!this.character || !this.character.achievements) {
+      console.warn('No character or achievements to update');
+      return;
+    }
+
+    console.log('Updating achievement progress...');
+
+    this.character.achievements.forEach((achievement) => {
+      // Convert string 'completed' to boolean if needed
+      if (typeof achievement.completed === 'string') {
+        achievement.completed = achievement.completed === 'true';
+      }
+
+      // Set progress to 100% for completed achievements
+      if (achievement.completed === true) {
+        achievement.progress = 100;
+      }
+    });
+
+    // Update characterProfile
+    if (this.characterProfile?.characterData) {
+      this.characterProfile.characterData.achievements = [
+        ...this.character.achievements,
+      ];
+    }
+
+    // Save character
+    this.characterService.saveCharacter(this.character);
+
+    // Force UI update
+    this.cdr.detectChanges();
+  }
+
+  // Apply server progress data to achievements
   applyProgressData(progressData: any) {
     if (!progressData || !this.character?.achievements) return;
 
@@ -141,22 +412,34 @@ export class CharacterProfileComponent implements OnInit {
         achievement.completed = achievementProgress.completed;
       }
     });
+
+    // Сохраняем персонажа с обновленными достижениями
+    this.characterService.saveCharacter(this.character);
+
+    // Запускаем обнаружение изменений
+    this.cdr.detectChanges();
   }
 
   goBack() {
-    // Очищаем выбранного персонажа из localStorage
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('selectedCharacter');
-    }
+    // Сохраняем текущего персонажа перед переходом
+    if (this.character) {
+      console.log('Saving character before switching:', this.character.name);
 
-    // Проверяем, авторизован ли пользователь
-    const currentUser = this.authService.getCurrentUser();
+      // Нормализуем достижения перед сохранением
+      this.normalizeAchievements();
 
-    if (currentUser) {
-      this.router.navigate(['/character-creation']);
+      // Сохраняем в localStorage
+      localStorage.setItem('selectedCharacter', JSON.stringify(this.character));
+
+      // Сохраняем на сервере
+      this.characterService
+        .updateProfile(this.character.name, this.character)
+        .subscribe({
+          next: () => this.router.navigate(['/character-creation']),
+          error: () => this.router.navigate(['/character-creation']),
+        });
     } else {
-      // Если пользователь не авторизован, перенаправляем на страницу входа
-      this.router.navigate(['/login']);
+      this.router.navigate(['/character-creation']);
     }
   }
 
@@ -165,16 +448,16 @@ export class CharacterProfileComponent implements OnInit {
   }
 
   startWorkout() {
-    // Сохраняем выбранного персонажа перед переходом на страницу тренировки
-    if (this.character && typeof window !== 'undefined') {
+    // Сохраняем выбранного персонажа перед переходом
+    if (this.character) {
+      // Сохраняем в localStorage для использования на странице тренировки
       localStorage.setItem('selectedCharacter', JSON.stringify(this.character));
     }
     this.router.navigate(['/workout-page']);
   }
 
-  // Добавлен метод для получения награды за следующий уровень
+  // Method to get next level reward
   getNextLevelReward(currentLevel: number): string {
-    // Список возможных наград по уровням
     const rewards = [
       'New ability: Strength Boost',
       'Increased stamina',
@@ -183,7 +466,23 @@ export class CharacterProfileComponent implements OnInit {
       'New ability: Mental Focus',
     ];
 
-    // Возвращаем награду по модулю, чтобы не выходить за пределы массива
     return rewards[currentLevel % rewards.length];
+  }
+
+  // Метод для ручного обновления данных с сервера
+  refreshData() {
+    console.log('Refreshing character data from server...');
+
+    // Получаем данные с сервера
+    this.loadUserProgress();
+
+    // Нормализуем достижения
+    this.normalizeAchievements();
+
+    // Обновляем отображение достижений
+    this.updateAchievementProgress();
+
+    // Показываем уведомление пользователю
+    alert('Data refreshed!');
   }
 }

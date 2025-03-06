@@ -1,4 +1,4 @@
-<div *ngIf="character" class="character-profile">
+<div *ngIf="characterProfile" class="character-profile">
   <div class="header">
     <h1 class="profile-title">
       Character profile/<span class="nickname">{{
@@ -9,21 +9,22 @@
   </div>
 
   <div class="character-card">
-    <h2>{{ character.name || "Adventurer" }}</h2>
+    <h2>{{ characterProfile.characterData.name || "Adventurer" }}</h2>
     <div class="avatar-container">
       <img
-        [src]="character.avatar"
-        alt="{{ character.name || 'Character avatar' }}"
+        [src]="characterProfile.characterData.avatar"
+        alt="{{ characterProfile.characterData.name || 'Character avatar' }}"
         class="character-avatar"
       />
     </div>
 
-    <!-- Обновленная информация об уровне и XP -->
-    <div class="level-info">
+    <!-- Updated level and XP information -->
+    <div class="level-info" *ngIf="characterProfile.progress">
       <p class="character-level">
-        Level {{ character.level || 1 }} {{ character.class || "" }}
+        Level {{ characterProfile.progress.level || 1 }}
+        {{ characterProfile.characterData.class || "" }}
       </p>
-      <div class="level-badge">{{ character.level || 1 }}</div>
+      <div class="level-badge">{{ characterProfile.progress.level || 1 }}</div>
     </div>
 
     <div class="xp-container">
@@ -31,26 +32,29 @@
         <div
           class="progress-bar-inner"
           [style.width.%]="
-            ((character.xp || 0) / (character.xpToNextLevel || 1000)) * 100
+            ((characterProfile.progress.experience || 0) /
+              (characterProfile.progress.experienceToNextLevel || 1000)) *
+            100
           "
         ></div>
       </div>
       <div class="xp-text">
-        {{ character.xp || 0 }} / {{ character.xpToNextLevel || 1000 }} XP
+        {{ characterProfile.progress.experience || 0 }} /
+        {{ characterProfile.progress.experienceToNextLevel || 1000 }} XP
       </div>
     </div>
 
-    <!-- Статистика тренировок -->
+    <!-- Workout Stats -->
     <div class="workout-stats">
       <div class="stat-item">
         <span class="stat-value">{{
-          character.stats?.totalWorkouts || 0
+          characterProfile.characterData.stats?.totalWorkouts || 0
         }}</span>
         <span class="stat-label">Workouts</span>
       </div>
       <div class="stat-item">
         <span class="stat-value">{{
-          character.stats?.totalXpGained || 0
+          characterProfile.characterData.stats?.totalXpGained || 0
         }}</span>
         <span class="stat-label">Total XP</span>
       </div>
@@ -59,27 +63,45 @@
     <h3>🏆 Achievements</h3>
     <div
       *ngIf="
-        character.achievements && character.achievements.length > 0;
+        characterProfile.characterData.achievements &&
+          characterProfile.characterData.achievements.length > 0;
         else noAchievements
       "
     >
-      <li *ngFor="let achievement of character.achievements">
+      <div
+        *ngFor="let achievement of characterProfile.characterData.achievements"
+        class="achievement-item"
+        [class.completed]="achievement.completed"
+      >
+        <div style="font-size: 10px; color: gray">
+          Отладка: completed={{ achievement.completed }}, progress={{
+            achievement.progress
+          }}
+        </div>
         <span class="achievement-name">{{ achievement.name }}</span>
         <p class="achievement-description">{{ achievement.description }}</p>
         <div class="progress-bar">
           <div
             class="progress-bar-inner"
-            [style.width.%]="achievement.progress || 0"
+            [ngStyle]="{
+              width:
+                (achievement.progress !== undefined
+                  ? achievement.progress
+                  : 0) + '%'
+            }"
           ></div>
         </div>
-        <span class="achievement-status" *ngIf="achievement.completed"
-          >Completed!</span
-        >
-        <!-- Отображение XP награды -->
-        <span class="achievement-xp" *ngIf="achievement.xpReward"
-          >+{{ achievement.xpReward }} XP</span
-        >
-      </li>
+        <div class="achievement-status">
+          <ng-container *ngIf="achievement.completed; else showXP">
+            <span class="achievement-completed">Completed!</span>
+          </ng-container>
+          <ng-template #showXP>
+            <span class="achievement-xp" *ngIf="achievement.xpReward"
+              >+{{ achievement.xpReward }} XP</span
+            >
+          </ng-template>
+        </div>
+      </div>
     </div>
     <ng-template #noAchievements>
       <p class="no-data">Complete workouts to earn achievements</p>
@@ -90,9 +112,12 @@
     <h3>🎯 Challenges</h3>
     <div
       class="challenges-card"
-      *ngIf="character.challenges && character.challenges.length > 0"
+      *ngIf="
+        characterProfile.characterData.challenges &&
+        characterProfile.characterData.challenges.length > 0
+      "
     >
-      <div *ngFor="let challenge of character.challenges">
+      <div *ngFor="let challenge of characterProfile.characterData.challenges">
         <div class="challenge-container">
           <p>{{ challenge.description }}</p>
 
@@ -102,20 +127,23 @@
               [style.width.%]="challenge.progress || 0"
             ></div>
           </div>
-          <span class="challenge-xp" *ngIf="challenge.xpReward"
-            >+{{ challenge.xpReward }} XP</span
-          >
+          <span class="challenge-xp" *ngIf="challenge.xpReward">
+            +{{ challenge.xpReward }} XP
+          </span>
         </div>
       </div>
     </div>
     <div
       class="card abilities-card"
       *ngIf="
-        character.specialAbilities && character.specialAbilities.length > 0
+        characterProfile.characterData.specialAbilities &&
+        characterProfile.characterData.specialAbilities.length > 0
       "
     >
       <h3>✨ Special Abilities</h3>
-      <div *ngFor="let ability of character.specialAbilities">
+      <div
+        *ngFor="let ability of characterProfile.characterData.specialAbilities"
+      >
         <span class="ability-name">{{ ability.name || "Ability" }}</span>
         <div class="progress-bar">
           <div
@@ -134,18 +162,24 @@
 
     <h3>🔼 Next Level</h3>
     <div class="next-level-container">
-      <div class="next-level-value">{{ (character.level || 1) + 1 }}</div>
+      <div class="next-level-value">
+        {{ (characterProfile.progress.level || 1) + 1 }}
+      </div>
       <div class="next-level-info">
         <p>
           Collect
           <strong>{{
-            (character.xpToNextLevel || 1000) - (character.xp || 0)
+            (characterProfile.progress.experienceToNextLevel || 1000) -
+              (characterProfile.progress.experience || 0)
           }}</strong>
           more XP to level up!
         </p>
         <p>
-          <strong>Level {{ (character.level || 1) + 1 }} reward:</strong>
-          {{ getNextLevelReward(character.level || 1) }}
+          <strong
+            >Level
+            {{ (characterProfile.progress.level || 1) + 1 }} reward:</strong
+          >
+          {{ getNextLevelReward(characterProfile.progress.level || 1) }}
         </p>
       </div>
     </div>
@@ -161,7 +195,7 @@
   </div>
 </div>
 
-<div *ngIf="!character" class="character-profile loading">
+<div *ngIf="!characterProfile" class="character-profile loading">
   <div class="header">
     <h1 class="profile-title">Loading character profile...</h1>
   </div>
