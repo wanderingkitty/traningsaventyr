@@ -431,12 +431,28 @@ export class CharacterProfileComponent implements OnInit, OnDestroy {
       // Сохраняем в localStorage
       localStorage.setItem('selectedCharacter', JSON.stringify(this.character));
 
-      // Сохраняем на сервере
+      // Получаем имя пользователя вместо ID (userID = username в вашем случае)
+      const currentUser = this.authService.getCurrentUser();
+      const username = currentUser?.name || '';
+
+      console.log('goBack: Current user:', username);
+      console.log('goBack: Character data:', this.character);
+
+      // Сохраняем на сервере (используя имя персонажа вместо ID)
       this.characterService
         .updateProfile(this.character.name, this.character)
         .subscribe({
-          next: () => this.router.navigate(['/character-creation']),
-          error: () => this.router.navigate(['/character-creation']),
+          next: (response) => {
+            console.log(
+              'Character successfully saved before navigation:',
+              response
+            );
+            this.router.navigate(['/character-creation']);
+          },
+          error: (error) => {
+            console.error('Error saving character before navigation:', error);
+            this.router.navigate(['/character-creation']);
+          },
         });
     } else {
       this.router.navigate(['/character-creation']);

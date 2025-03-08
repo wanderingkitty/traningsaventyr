@@ -18,6 +18,15 @@ export class CharacterService {
   private apiUrl = 'http://localhost:1408/api/profiles';
   private baseXpRequirement = 1000;
 
+  private characterSaveStatusSubject = new BehaviorSubject<{
+    status: 'success' | 'error' | 'idle';
+    message: string;
+  }>({
+    status: 'idle',
+    message: '',
+  });
+  characterSaveStatus$ = this.characterSaveStatusSubject.asObservable();
+
   private characterProgressSubject = new BehaviorSubject<CharacterProgress>({
     level: 1,
     experience: 0,
@@ -58,6 +67,57 @@ export class CharacterService {
       // Также сохраняем как выбранного персонажа
       localStorage.setItem('selectedCharacter', JSON.stringify(character));
     }
+
+    // Также вызываем updateProfile для сохранения на сервере
+    // Но не подписываемся на результат, чтобы избежать циклов
+    // Это опционально, поскольку здесь мы не нуждаемся в обратной связи
+    this.http
+      .put(`${this.apiUrl}/${userId}`, {
+        userId: userId,
+        username: currentUser.name,
+        selectedCharacterName: character.name,
+        characterData: character,
+        progress: this.characterProgressSubject.value,
+      })
+      .subscribe({
+        next: () => console.log(`Character ${character.name} saved to server`),
+        error: (err) => console.error('Error saving character to server:', err),
+      });
+  }
+
+  updateProfileWithAllData(
+    userId: string,
+    character: Character,
+    progress: any
+  ): Observable<any> {
+    const requestBody = {
+      progress: progress,
+      characterData: character,
+    };
+
+    console.log(`Sending complete update for user ${userId}:`, requestBody);
+    return this.http.put(`${this.apiUrl}/progress/${userId}`, requestBody);
+  }
+
+  // Сначала добавьте этот метод в CharacterService:
+
+  getUserProfiles(username: string): Observable<CharacterProfile[]> {
+    if (!username) {
+      console.error('Username is required to get profiles');
+      return of([]);
+    }
+
+    return this.http
+      .get<CharacterProfile[]>(`${this.apiUrl}/user/${username}`)
+      .pipe(
+        tap((profiles) => {
+          console.log('Received user profiles:', profiles);
+        }),
+        catchError((error: any) => {
+          console.error('Error fetching user profiles:', error);
+          return of([]);
+        })
+      );
   }
 
   // Метод для получения Observable прогресса для конкретного персонажа
@@ -134,20 +194,32 @@ export class CharacterService {
       character.avatar = this.getDefaultAvatarForClass(character.name);
     }
 
+    // Получаем текущий прогресс
+    const currentProgress = this.characterProgressSubject.value;
+
+    // Синхронизируем данные о прогрессе с персонажем
+    character.level = currentProgress.level;
+    character.xp = currentProgress.experience;
+    character.xpToNextLevel = currentProgress.experienceToNextLevel;
+
     const profileData = {
       userId: currentUser.userId || currentUser.name,
       username: currentUser.name,
       selectedCharacterName: character.name,
       characterData: character,
-      progress: this.characterProgressSubject.value,
+      progress: currentProgress,
     };
 
     console.log('Creating profile with data:', profileData);
     return this.http.post(this.apiUrl, profileData);
   }
 
-  // Обновленный метод updateProfile для работы с CharacterProfileComponent
   updateProfile(characterName: string, character: Character): Observable<any> {
+    if (!character) {
+      console.error('Character is undefined in updateProfile');
+      return of({ error: 'No character data provided' });
+    }
+
     if (!character.avatar) {
       character.avatar = this.getDefaultAvatarForClass(character.name);
     }
@@ -158,34 +230,70 @@ export class CharacterService {
     }
     const userId = currentUser.userId || currentUser.name;
 
-    // Подготавливаем данные для отправки
+    // Синхронизируем данные о прогрессе с персонажем
+    const currentProgress = this.characterProgressSubject.value;
+    character.level = currentProgress.level;
+    character.xp = currentProgress.experience;
+    character.xpToNextLevel = currentProgress.experienceToNextLevel;
+
+    // Важно: убедимся, что characterData включен
     const profileData = {
       userId: userId,
       username: currentUser.name,
       selectedCharacterName: character.name,
-      characterData: character,
-      progress: this.characterProgressSubject.value,
+      characterData: { ...character }, // Создаем копию для защиты от потери данных
+      progress: currentProgress,
     };
 
-    console.log(
-      `Updating profile for user ${userId}, character ${characterName}:`,
-      profileData
-    );
+    console.log('Saving profile:', profileData);
 
-    // Отправляем запрос на сервер
-    return this.http
-      .put(`${this.apiUrl}/${userId}/characters/${characterName}`, profileData)
-      .pipe(
-        tap((response) => {
-          console.log('Profile update response:', response);
-          // Обновляем локальные данные после успешного обновления на сервере
-          this.saveCharacter(character);
-        }),
-        catchError((error) => {
-          console.error('Error updating profile:', error);
-          return of({ error: 'Failed to update profile' });
-        })
+    return this.http.put(`${this.apiUrl}/${userId}`, profileData).pipe(
+      tap((response) => {
+        console.log('Profile update response:', response);
+        // Обновляем локальные данные после успешного обновления на сервере
+        this.saveCharacter(character);
+      }),
+      catchError((error) => {
+        console.error('Error updating profile:', error);
+        return of({ error: 'Failed to update profile' });
+      })
+    );
+  }
+
+  // Добавьте в CharacterService
+  getExistingCharacter(characterName: string): Character | null {
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser) return null;
+
+    const userId = currentUser.userId || currentUser.name;
+    if (!userId) return null;
+
+    // Пытаемся найти персонажа в localStorage
+    if (typeof window !== 'undefined') {
+      const savedCharacter = localStorage.getItem(
+        `character_${userId}_${characterName}`
       );
+      if (savedCharacter) {
+        try {
+          const character = JSON.parse(savedCharacter);
+          console.log(
+            `Loaded existing character ${characterName} from localStorage`
+          );
+
+          // Синхронизируем с текущим прогрессом
+          const currentProgress = this.characterProgressSubject.value;
+          character.level = currentProgress.level;
+          character.xp = currentProgress.experience;
+          character.xpToNextLevel = currentProgress.experienceToNextLevel;
+
+          return character;
+        } catch (error) {
+          console.error('Error parsing saved character:', error);
+        }
+      }
+    }
+
+    return null;
   }
 
   private loadCharacterProgress() {
@@ -225,8 +333,25 @@ export class CharacterService {
   private updateUserProgress(userId: string, progress: CharacterProgress) {
     if (!userId) return;
 
+    // Получаем текущего персонажа из localStorage
+    let currentCharacter = null;
+    if (typeof window !== 'undefined') {
+      const selectedCharacter = localStorage.getItem('selectedCharacter');
+      if (selectedCharacter) {
+        try {
+          currentCharacter = JSON.parse(selectedCharacter);
+        } catch (error) {
+          console.error('Error parsing selected character:', error);
+        }
+      }
+    }
+
+    // Отправляем как прогресс, так и данные о персонаже
     this.http
-      .put(`${this.apiUrl}/progress/${userId}`, { progress })
+      .put(`${this.apiUrl}/progress/${userId}`, {
+        progress,
+        characterData: currentCharacter, // Добавляем данные персонажа
+      })
       .pipe(
         catchError((error) => {
           console.error('Error updating progress on server:', error);

@@ -76,32 +76,68 @@ export class AuthService {
     }
   }
 
+  // В AuthService
   logout() {
     const savedCharacter = localStorage.getItem('selectedCharacter');
     const savedUser = localStorage.getItem('user');
+    const token = localStorage.getItem('token');
 
+    // Сохраняем персонажа на сервере напрямую из AuthService
+    if (savedCharacter && savedUser && token) {
+      try {
+        const userData = JSON.parse(savedUser);
+        const character = JSON.parse(savedCharacter);
+
+        // Выполняем HTTP-запрос напрямую
+        this.http
+          .put(
+            `http://localhost:1408/api/profiles/${userData.name}/characters/${character.name}`,
+            {
+              userId: userData.name,
+              username: userData.name,
+              selectedCharacterName: character.name,
+              characterData: character,
+            },
+            {
+              headers: {
+                'Content-type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          )
+          .subscribe({
+            next: () => console.log('Персонаж сохранен перед выходом'),
+            error: (err) => console.error('Ошибка сохранения персонажа:', err),
+          });
+
+        // Сохраняем в localStorage
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(`character_${userData.name}`, savedCharacter);
+        }
+      } catch (error) {
+        console.error('Ошибка при обработке данных персонажа:', error);
+      }
+    }
+
+    // Стандартная логика выхода
     if (typeof window !== 'undefined') {
-      // Очищаем токен и текущего пользователя
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-
-      // Устанавливаем флаг для автоматического перехода
       localStorage.setItem('autoNavigate', 'true');
     }
 
     this.currentUserSubject.next(null);
     this.router.navigate(['/login']);
 
-    // Если у нас есть данные о персонаже и пользователе,
-    // сохраняем их для будущего использования
-    if (savedCharacter && savedUser) {
-      const userData = JSON.parse(savedUser);
-
-      // Сохраняем привязку персонажа к пользователю в localStorage
-      if (typeof window !== 'undefined') {
-        localStorage.setItem(`character_${userData.name}`, savedCharacter);
-      }
+    if (typeof window !== 'undefined') {
+      // Очищаем токен и текущего пользователя
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.setItem('autoNavigate', 'true');
     }
+
+    this.currentUserSubject.next(null);
+    this.router.navigate(['/login']);
   }
 
   getCurrentUser() {

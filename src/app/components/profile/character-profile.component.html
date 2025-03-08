@@ -24,7 +24,7 @@
         Level {{ characterProfile.progress.level || 1 }}
         {{ characterProfile.characterData.class || "" }}
       </p>
-      <div class="level-badge">{{ characterProfile.progress.level || 1 }}</div>
+      <div class="level-badge">{{ characterProfile.progress?.level || 1 }}</div>
     </div>
 
     <div class="xp-container">
@@ -32,15 +32,15 @@
         <div
           class="progress-bar-inner"
           [style.width.%]="
-            ((characterProfile.progress.experience || 0) /
+            ((characterProfile.progress?.experience || 0) /
               (characterProfile.progress.experienceToNextLevel || 1000)) *
             100
           "
         ></div>
       </div>
       <div class="xp-text">
-        {{ characterProfile.progress.experience || 0 }} /
-        {{ characterProfile.progress.experienceToNextLevel || 1000 }} XP
+        {{ characterProfile.progress?.experience || 0 }} /
+        {{ characterProfile.progress?.experienceToNextLevel || 1000 }} XP
       </div>
     </div>
 
@@ -73,13 +73,18 @@
         class="achievement-item"
         [class.completed]="achievement.completed"
       >
-        <div style="font-size: 10px; color: gray">
-          Отладка: completed={{ achievement.completed }}, progress={{
-            achievement.progress
-          }}
-        </div>
         <span class="achievement-name">{{ achievement.name }}</span>
         <p class="achievement-description">{{ achievement.description }}</p>
+        <div class="achievement-status">
+          <ng-container *ngIf="achievement.completed; else showXP">
+            <span class="achievement-completed">Completed!</span>
+          </ng-container>
+          <ng-template #showXP>
+            <span class="achievement-xp" *ngIf="achievement.xpReward"
+              >+{{ achievement.xpReward }} XP</span
+            >
+          </ng-template>
+        </div>
         <div class="progress-bar">
           <div
             class="progress-bar-inner"
@@ -90,16 +95,6 @@
                   : 0) + '%'
             }"
           ></div>
-        </div>
-        <div class="achievement-status">
-          <ng-container *ngIf="achievement.completed; else showXP">
-            <span class="achievement-completed">Completed!</span>
-          </ng-container>
-          <ng-template #showXP>
-            <span class="achievement-xp" *ngIf="achievement.xpReward"
-              >+{{ achievement.xpReward }} XP</span
-            >
-          </ng-template>
         </div>
       </div>
     </div>
@@ -120,16 +115,15 @@
       <div *ngFor="let challenge of characterProfile.characterData.challenges">
         <div class="challenge-container">
           <p>{{ challenge.description }}</p>
-
+          <span class="challenge-xp" *ngIf="challenge.xpReward">
+            +{{ challenge.xpReward }} XP
+          </span>
           <div class="progress-bar">
             <div
               class="progress-bar-inner"
               [style.width.%]="challenge.progress || 0"
             ></div>
           </div>
-          <span class="challenge-xp" *ngIf="challenge.xpReward">
-            +{{ challenge.xpReward }} XP
-          </span>
         </div>
       </div>
     </div>
@@ -190,7 +184,7 @@
       Start Workout
     </button>
     <button class="btn btn-secondary" (click)="goBack()">
-      Choose another character
+      Choose another class
     </button>
   </div>
 </div>

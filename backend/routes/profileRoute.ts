@@ -16,6 +16,27 @@ profileRouter.get('/', async (req, res) => {
   }
 });
 
+// Получение профилей пользователя по имени
+profileRouter.get('/user/:username', async (req, res) => {
+  try {
+    const { username } = req.params;
+    console.log('Получение профилей для пользователя:', username);
+
+    const db = getDb();
+    const profiles = await db
+      .collection('profiles')
+      .find({
+        username: username,
+      })
+      .toArray();
+
+    res.json(profiles);
+  } catch (error) {
+    console.error('Ошибка получения профилей:', error);
+    res.status(500).json({ message: 'Ошибка получения профилей пользователя' });
+  }
+});
+
 profileRouter.get('/:userId', async (req, res) => {
   try {
     console.log('Requested userId:', req.params.userId);
@@ -88,10 +109,67 @@ profileRouter.put('/progress/:userId', async (req, res) => {
       updatedAt: new Date(),
     };
 
-    // Если переданы данные персонажа, также обновляем их
+    // Если переданы данные персонажа, объединяем их с существующими данными
     if (characterData) {
-      updateData.characterData = characterData;
-      updateData.selectedCharacterName = characterData.name;
+      // Используем индексированный доступ для типизации
+      const existingCharacterData = existingProfile['characterData'] || {};
+
+      // Сохраняем существующие массивы, используя индексированный доступ
+      const existingAchievements: any[] =
+        existingCharacterData['achievements'] || [];
+      const existingChallenges: any[] =
+        existingCharacterData['challenges'] || [];
+      const existingSpecialAbilities: any[] =
+        existingCharacterData['specialAbilities'] || [];
+
+      // Если в запросе есть новые массивы, используем их, иначе используем существующие
+      let updatedAchievements = existingAchievements;
+
+      // Обновляем отдельные достижения в массиве с типизацией
+      if (
+        characterData['achievements'] &&
+        Array.isArray(characterData['achievements'])
+      ) {
+        // Для каждого достижения из запроса
+        characterData['achievements'].forEach((newAchievement: any) => {
+          // Находим соответствующее достижение в существующем массиве
+          const existingIndex = existingAchievements.findIndex(
+            (ea: any) => ea.name === newAchievement.name
+          );
+
+          if (existingIndex !== -1) {
+            // Если нашли, обновляем его
+            existingAchievements[existingIndex] = {
+              ...existingAchievements[existingIndex],
+              ...newAchievement,
+            };
+          } else {
+            // Если не нашли, добавляем новое
+            existingAchievements.push(newAchievement);
+          }
+        });
+
+        updatedAchievements = existingAchievements;
+      }
+
+      // Обновляем или используем существующие массивы
+      const updatedChallenges =
+        characterData['challenges'] || existingChallenges;
+      const updatedSpecialAbilities =
+        characterData['specialAbilities'] || existingSpecialAbilities;
+
+      // Создаем новый объект characterData с обновленными массивами, используя индексированный доступ
+      updateData.characterData = {
+        ...existingCharacterData,
+        ...characterData,
+        achievements: updatedAchievements,
+        challenges: updatedChallenges,
+        specialAbilities: updatedSpecialAbilities,
+      };
+
+      if (characterData['name']) {
+        updateData.selectedCharacterName = characterData['name'];
+      }
     }
 
     // Обновляем профиль
@@ -112,4 +190,42 @@ profileRouter.put('/progress/:userId', async (req, res) => {
   }
 });
 
+profileRouter.put('/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { characterData, selectedCharacterName, progress } = req.body;
+
+    console.log(`Обновление профиля для пользователя ${userId}`);
+
+    const db = getDb();
+    const profileCollection = db.collection('profiles');
+
+    // Проверка существования профиля
+    const existingProfile = await profileCollection.findOne({ userId });
+
+    if (!existingProfile) {
+      return res.status(404).json({ message: 'Профиль не найден' });
+    }
+
+    // Подготовка данных обновления
+    const updateData = {
+      ...req.body,
+      updatedAt: new Date(),
+    };
+
+    // Обновление профиля
+    const result = await profileCollection.updateOne(
+      { userId },
+      { $set: updateData }
+    );
+
+    res.json({
+      message: 'Профиль успешно обновлен',
+      modifiedCount: result.modifiedCount,
+    });
+  } catch (error) {
+    console.error('Ошибка обновления профиля:', error);
+    res.status(500).json({ message: 'Ошибка обновления профиля', error });
+  }
+});
 export default profileRouter;
