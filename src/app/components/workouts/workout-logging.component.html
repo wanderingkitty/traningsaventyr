@@ -35,7 +35,7 @@
       <div
         class="exercises-list"
         [class.completed]="completedExercises[exercise.name]"
-        (click)="completeExercise(exercise)"
+        (click)="completeExercise(exercise, $event)"
       >
         <h2>{{ exercise.name }}</h2>
         <span> {{ exercise.description }}</span>
@@ -61,7 +61,7 @@
         <div
           class="exercises-list"
           [class.completed]="completedAchievements[achievement.name]"
-          (click)="completeAchievement(achievement)"
+          (click)="completeAchievement(achievement, $event)"
         >
           <h2>{{ achievement.name }}</h2>
           <span class="workout-description">

@@ -7,6 +7,9 @@
   font-family: "Fira Sans", sans-serif;
   background: linear-gradient(135deg, #1e1724, #3b2d4a);
   min-height: 100vh;
+  margin-top: 0; /* Добавьте это */
+  position: relative; /* Добавьте это */
+  top: 0;
 }
 
 .header {

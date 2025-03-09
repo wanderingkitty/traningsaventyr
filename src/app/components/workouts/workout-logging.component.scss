@@ -5,11 +5,13 @@
   background: linear-gradient(135deg, #1e1724, #3b2d4a);
   min-height: 100vh;
   padding: 20px;
-  padding-top: 140px;
+  padding-top: 146px;
   font-family: "Fira Sans", sans-serif;
   font-weight: 400;
   color: #ffffff;
   overflow: hidden;
+  position: relative; /* Добавьте это */
+  top: 0;
 }
 
 .headers {

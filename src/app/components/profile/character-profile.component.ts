@@ -36,6 +36,7 @@ export class CharacterProfileComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    window.scrollTo(0, 0);
     console.log('Character profile component initialized');
 
     // Загрузка персонажа из localStorage (если не был передан через навигацию)

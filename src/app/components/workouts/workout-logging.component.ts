@@ -557,7 +557,11 @@ export class WorkoutComponent implements OnInit {
     return new Date(seconds * 1000).toISOString().slice(11, 19);
   }
 
-  completeExercise(exercise: any) {
+  completeExercise(exercise: any, event: MouseEvent) {
+    if (event) {
+      event.preventDefault();
+    }
+
     if (!this.isRunning) {
       this.showNotification('Start the timer first!');
       return;
@@ -577,7 +581,7 @@ export class WorkoutComponent implements OnInit {
     }
   }
 
-  completeAchievement(achievement: any) {
+  completeAchievement(achievement: any, event: MouseEvent) {
     if (!this.isRunning) {
       this.showNotification('Start the timer first!');
       return;
