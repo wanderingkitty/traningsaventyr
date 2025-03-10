@@ -3,14 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { AuthService } from './auth.service';
 import { Character, CharacterProfile } from 'backend/models/character';
 
-import {
-  BehaviorSubject,
-  Observable,
-  catchError,
-  of,
-  switchMap,
-  tap,
-} from 'rxjs';
+import { BehaviorSubject, Observable, catchError, of, tap } from 'rxjs';
 
 interface CharacterProgress {
   level: number;
@@ -222,7 +215,6 @@ export class CharacterService {
   }
 
   // Исправленный метод updateProfile для CharacterService
-  // Модифицированный метод updateProfile для предотвращения дублирования
   updateProfile(characterName: string, character: Character): Observable<any> {
     console.log(
       `[CharacterService] Обновление профиля для персонажа: ${characterName}`
@@ -300,58 +292,18 @@ export class CharacterService {
         characterCopy.achievements && characterCopy.achievements.length > 0,
     });
 
-    // ВАЖНОЕ ИЗМЕНЕНИЕ: Сначала проверяем, существует ли уже профиль
-    return this.getUserProfiles(currentUser.name).pipe(
-      switchMap((profiles) => {
-        // Ищем профиль с таким же именем персонажа
-        const existingProfile = profiles.find(
-          (p) => p.selectedCharacterName === character.name
+    return this.http.put(`${this.apiUrl}/${userId}`, profileData).pipe(
+      tap((response) => {
+        console.log(
+          '[CharacterService] Ответ сервера на обновление профиля:',
+          response
         );
-
-        let apiUrl = `${this.apiUrl}`;
-        let method: string;
-
-        if (existingProfile && existingProfile._id) {
-          // Если профиль уже существует, обновляем его по ID
-          apiUrl = `${apiUrl}/${existingProfile._id}`;
-          console.log(
-            `[CharacterService] Обновляем существующий профиль с ID: ${existingProfile._id}`
-          );
-          method = 'patch'; // Используем PATCH вместо PUT
-        } else {
-          // Если профиля не существует, создаем новый
-          apiUrl = `${apiUrl}/${userId}`;
-          console.log(
-            `[CharacterService] Создаем новый профиль для пользователя: ${userId}`
-          );
-          method = 'put';
-        }
-
-        // Выполняем запрос соответствующим методом
-        let request;
-        if (method === 'patch') {
-          request = this.http.patch(apiUrl, profileData);
-        } else {
-          request = this.http.put(apiUrl, profileData);
-        }
-
-        return request.pipe(
-          tap((response) => {
-            console.log(
-              '[CharacterService] Ответ сервера на обновление профиля:',
-              response
-            );
-            // Обновляем локальные данные после успешного обновления на сервере
-            this.saveCharacter(character);
-          }),
-          catchError((error) => {
-            console.error(
-              '[CharacterService] Ошибка обновления профиля:',
-              error
-            );
-            return of({ error: 'Failed to update profile' });
-          })
-        );
+        // Обновляем локальные данные после успешного обновления на сервере
+        this.saveCharacter(character);
+      }),
+      catchError((error) => {
+        console.error('[CharacterService] Ошибка обновления профиля:', error);
+        return of({ error: 'Failed to update profile' });
       })
     );
   }
