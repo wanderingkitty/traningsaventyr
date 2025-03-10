@@ -5,25 +5,67 @@ export interface SpecialAbility {
   unlocked: boolean;
 }
 
+// Общие интерфейсы для тренировок и персонажа
+// Добавьте их в отдельный файл models/common.model.ts
+
+export interface Exercise {
+  name: string;
+  description: string;
+  xpReward: string;
+  xpValue?: number;
+  completed?: boolean;
+}
+
+// Общий интерфейс для достижений, который будет использоваться везде
 export interface Achievement {
   name: string;
   description: string;
   progress: number;
-  completed?: boolean; // Добавлено новое свойство
-  xpReward?: number; // Добавлено новое свойство
-  current?: number; // Опциональное свойство для отслеживания прогресса
+  completed?: boolean;
+  xpReward: number;
+  current?: number;
+  // Дополнительные поля из WorkoutAchievement
+  progressDescription?: string;
+  target?: number;
+  currentValue?: number;
+  unit?: string;
+}
+
+export interface WorkoutProgress {
+  routesCompleted: number;
+  totalXpGained: number;
+}
+
+export interface Workout {
+  exercises: Exercise[];
+  achievements: Achievement[]; // Используем общий интерфейс Achievement
+  progress: WorkoutProgress;
+}
+
+export interface WorkoutStats {
+  workoutsCompleted: number;
+  exercisesCompleted: number;
+  achievementsCompleted: number;
+  xpGained: number;
+}
+
+// Добавьте другие необходимые интерфейсы из модели персонажа
+export interface CharacterStats {
+  totalWorkouts: number;
+  totalXpGained: number;
+}
+
+export interface SpecialAbility {
+  name: string;
+  unlockedAtLevel?: number;
+  requiredLevel?: number;
+  unlocked: boolean;
 }
 
 export interface Challenge {
   description: string;
   progress: number;
-  xpReward?: number; // Добавлено новое свойство
-}
-
-export interface CharacterStats {
-  totalWorkouts: number;
-  totalXpGained: number;
-  // Можно добавить другие статистические данные при необходимости
+  xpReward?: number;
 }
 
 export interface Character {
@@ -32,10 +74,10 @@ export interface Character {
   level: number;
   xp: number;
   avatar: string;
-  class?: string; // Опциональное поле
+  class?: string;
   xpToNextLevel: number;
-  stats?: CharacterStats; // Добавлено новое свойство
-  achievements: Achievement[];
+  stats?: CharacterStats;
+  achievements: Achievement[]; // Используем общий интерфейс Achievement
   challenges: Challenge[];
   specialAbilities: SpecialAbility[];
 }

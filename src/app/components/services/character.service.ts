@@ -3,7 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { AuthService } from './auth.service';
 import { Character, CharacterProfile } from 'backend/models/character';
 
-import { BehaviorSubject, Observable, catchError, of, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  catchError,
+  of,
+  switchMap,
+  tap,
+} from 'rxjs';
 
 interface CharacterProgress {
   level: number;
@@ -214,9 +221,15 @@ export class CharacterService {
     return this.http.post(this.apiUrl, profileData);
   }
 
+  // Исправленный метод updateProfile для CharacterService
+  // Модифицированный метод updateProfile для предотвращения дублирования
   updateProfile(characterName: string, character: Character): Observable<any> {
+    console.log(
+      `[CharacterService] Обновление профиля для персонажа: ${characterName}`
+    );
+
     if (!character) {
-      console.error('Character is undefined in updateProfile');
+      console.error('[CharacterService] Персонаж не определен в updateProfile');
       return of({ error: 'No character data provided' });
     }
 
@@ -230,32 +243,115 @@ export class CharacterService {
     }
     const userId = currentUser.userId || currentUser.name;
 
+    // Проверка состояния достижений перед отправкой
+    if (character.achievements) {
+      console.log(
+        `[CharacterService] updateProfile: Количество достижений: ${character.achievements.length}`
+      );
+
+      // Проверяем завершенные достижения
+      const completedAchievements = character.achievements.filter(
+        (a) => a.completed
+      );
+      console.log(
+        `[CharacterService] updateProfile: Завершенные достижения: ${completedAchievements.length}`
+      );
+      if (completedAchievements.length > 0) {
+        console.log(
+          `[CharacterService] updateProfile: Имена завершенных достижений: ${completedAchievements
+            .map((a) => a.name)
+            .join(', ')}`
+        );
+      }
+
+      // Исправляем достижения с нулевым прогрессом, но отмеченные как выполненные
+      character.achievements.forEach((achievement) => {
+        if (achievement.completed && achievement.progress === 0) {
+          console.log(
+            `[CharacterService] Исправляем прогресс для выполненного достижения: ${achievement.name}`
+          );
+          achievement.progress = 100;
+        }
+      });
+    }
+
     // Синхронизируем данные о прогрессе с персонажем
     const currentProgress = this.characterProgressSubject.value;
     character.level = currentProgress.level;
     character.xp = currentProgress.experience;
     character.xpToNextLevel = currentProgress.experienceToNextLevel;
 
+    // Создаем глубокую копию для защиты от случайных изменений
+    const characterCopy = JSON.parse(JSON.stringify(character));
+
     // Важно: убедимся, что characterData включен
     const profileData = {
       userId: userId,
       username: currentUser.name,
       selectedCharacterName: character.name,
-      characterData: { ...character }, // Создаем копию для защиты от потери данных
+      characterData: characterCopy,
       progress: currentProgress,
     };
 
-    console.log('Saving profile:', profileData);
+    console.log('[CharacterService] Отправка профиля на сервер:', {
+      userId: profileData.userId,
+      characterName: profileData.selectedCharacterName,
+      hasAchievements:
+        characterCopy.achievements && characterCopy.achievements.length > 0,
+    });
 
-    return this.http.put(`${this.apiUrl}/${userId}`, profileData).pipe(
-      tap((response) => {
-        console.log('Profile update response:', response);
-        // Обновляем локальные данные после успешного обновления на сервере
-        this.saveCharacter(character);
-      }),
-      catchError((error) => {
-        console.error('Error updating profile:', error);
-        return of({ error: 'Failed to update profile' });
+    // ВАЖНОЕ ИЗМЕНЕНИЕ: Сначала проверяем, существует ли уже профиль
+    return this.getUserProfiles(currentUser.name).pipe(
+      switchMap((profiles) => {
+        // Ищем профиль с таким же именем персонажа
+        const existingProfile = profiles.find(
+          (p) => p.selectedCharacterName === character.name
+        );
+
+        let apiUrl = `${this.apiUrl}`;
+        let method: string;
+
+        if (existingProfile && existingProfile._id) {
+          // Если профиль уже существует, обновляем его по ID
+          apiUrl = `${apiUrl}/${existingProfile._id}`;
+          console.log(
+            `[CharacterService] Обновляем существующий профиль с ID: ${existingProfile._id}`
+          );
+          method = 'patch'; // Используем PATCH вместо PUT
+        } else {
+          // Если профиля не существует, создаем новый
+          apiUrl = `${apiUrl}/${userId}`;
+          console.log(
+            `[CharacterService] Создаем новый профиль для пользователя: ${userId}`
+          );
+          method = 'put';
+        }
+
+        // Выполняем запрос соответствующим методом
+        let request;
+        if (method === 'patch') {
+          request = this.http.patch(apiUrl, profileData);
+        } else {
+          request = this.http.put(apiUrl, profileData);
+        }
+
+        return request.pipe(
+          tap((response) => {
+            console.log(
+              '[CharacterService] Ответ сервера на обновление профиля:',
+              response
+            );
+            // Обновляем локальные данные после успешного обновления на сервере
+            this.saveCharacter(character);
+          }),
+          catchError((error) => {
+            console.error(
+              '[CharacterService] Ошибка обновления профиля:',
+              error
+            );
+            return of({ error: 'Failed to update profile' });
+          })
+        );
       })
     );
   }

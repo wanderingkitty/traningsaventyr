@@ -195,34 +195,65 @@ profileRouter.put('/:userId', async (req, res) => {
     const { userId } = req.params;
     const { characterData, selectedCharacterName, progress } = req.body;
 
-    console.log(`Обновление профиля для пользователя ${userId}`);
+    console.log(
+      `Обновление профиля для пользователя ${userId}, персонаж: ${selectedCharacterName}`
+    );
 
     const db = getDb();
     const profileCollection = db.collection('profiles');
 
-    // Проверка существования профиля
-    const existingProfile = await profileCollection.findOne({ userId });
-
-    if (!existingProfile) {
-      return res.status(404).json({ message: 'Профиль не найден' });
-    }
-
-    // Подготовка данных обновления
-    const updateData = {
-      ...req.body,
-      updatedAt: new Date(),
-    };
-
-    // Обновление профиля
-    const result = await profileCollection.updateOne(
-      { userId },
-      { $set: updateData }
-    );
-
-    res.json({
-      message: 'Профиль успешно обновлен',
-      modifiedCount: result.modifiedCount,
+    // Ищем профиль для этого пользователя и персонажа
+    const existingProfile = await profileCollection.findOne({
+      userId,
+      selectedCharacterName,
     });
+
+    if (existingProfile) {
+      // Профиль существует - обновляем его
+      console.log(
+        `Найден существующий профиль для ${selectedCharacterName}, обновляем...`
+      );
+
+      // Подготовка данных обновления
+      const updateData = {
+        ...req.body,
+        updatedAt: new Date(),
+      };
+
+      // Обновление профиля
+      const result = await profileCollection.updateOne(
+        {
+          userId,
+          selectedCharacterName,
+        },
+        { $set: updateData }
+      );
+
+      res.json({
+        message: 'Профиль успешно обновлен',
+        modifiedCount: result.modifiedCount,
+      });
+    } else {
+      // Профиль не найден - создаем новый
+      console.log(
+        `Профиль для ${selectedCharacterName} не найден, создаем новый...`
+      );
+
+      const newProfile = {
+        ...req.body,
+        userId,
+        selectedCharacterName,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      const insertResult = await profileCollection.insertOne(newProfile);
+
+      res.status(201).json({
+        message: 'Создан новый профиль',
+        insertedId: insertResult.insertedId,
+      });
+    }
   } catch (error) {
     console.error('Ошибка обновления профиля:', error);
     res.status(500).json({ message: 'Ошибка обновления профиля', error });

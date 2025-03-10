@@ -2,8 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { CharacterService } from '../services/character.service';
-import { Workout } from '../models/workout.model';
-import { Character } from 'backend/models/character';
+import { Achievement, Character, Workout } from 'backend/models/character';
+import {
+  ascenderWorkouts,
+  runnerWorkouts,
+  zenWarriorWorkouts,
+} from './workout-data';
 
 @Component({
   selector: 'workout-page',
@@ -30,388 +34,16 @@ export class WorkoutComponent implements OnInit {
   };
 
   workouts: Workout[] = [];
-
-  // Данные упражнений для разных классов
-  runnerWorkouts: Workout = {
-    exercises: [
-      {
-        name: '🏃‍♂️ Running session',
-        description: 'Run for 10-15 minutes at a comfortable pace',
-        xpReward: 'XP + 50',
-        xpValue: 50,
-      },
-      {
-        name: 'Stretching',
-        description: 'Stretch your legs and back',
-        xpReward: 'XP + 40',
-        xpValue: 40,
-      },
-      {
-        name: 'Interval sprints',
-        description: '30 seconds sprint, 1 minute rest (x5)',
-        xpReward: 'XP + 60',
-        xpValue: 60,
-      },
-      {
-        name: 'Cool down',
-        description: 'Walk for 5 minutes to cool down',
-        xpReward: 'XP + 30',
-        xpValue: 30,
-      },
-    ],
-
-    achievements: [
-      {
-        name: '🗾 Distance goals',
-        description: 'Reach new horizons',
-        progressDescription: 'Achievement progress: +50',
-        progress: 0,
-        xpReward: 50,
-        target: 20,
-        currentValue: 0,
-        unit: 'km',
-        completed: false,
-      },
-      {
-        name: '📈 Pace master',
-        description: 'Maintain steady speed',
-        progressDescription: 'Achievement progress: +50',
-        progress: 0,
-        xpReward: 60,
-        target: 30,
-        currentValue: 0,
-        unit: 'minutes',
-        completed: false,
-      },
-      {
-        name: '⏱️ Interval training',
-        description: 'Master speed variation',
-        progressDescription: 'Achievement progress: +50',
-        progress: 0,
-        xpReward: 50,
-        target: 30,
-        currentValue: 0,
-        unit: 'minutes',
-        completed: false,
-      },
-      {
-        name: '🏃 Sprint champion',
-        description: 'Achieve your best speed record',
-        progressDescription: 'Achievement progress: +50',
-        progress: 0,
-        xpReward: 65,
-        target: 30,
-        currentValue: 0,
-        unit: 'minutes',
-        completed: false,
-      },
-      {
-        name: '🌄 Hill conqueror',
-        description: 'Master running uphill',
-        progressDescription: 'Achievement progress: +50',
-        progress: 0,
-        xpReward: 80,
-        target: 30,
-        currentValue: 0,
-        unit: 'minutes',
-        completed: false,
-      },
-      {
-        name: '🌱 Trail blazer',
-        description: 'Explore off-road running paths',
-        progressDescription: 'Achievement progress: +50',
-        progress: 0,
-        xpReward: 75,
-        target: 30,
-        currentValue: 0,
-        unit: 'minutes',
-        completed: false,
-      },
-      {
-        name: '🏁 Race finisher',
-        description: 'Complete a virtual race',
-        progressDescription: 'Achievement progress: +50',
-        progress: 0,
-        xpReward: 90,
-        target: 30,
-        currentValue: 0,
-        unit: 'minutes',
-        completed: false,
-      },
-      {
-        name: '🔄 Consistency champion',
-        description: 'Run regularly for a whole week',
-        progressDescription: 'Achievement progress: +50',
-        progress: 0,
-        xpReward: 85,
-        target: 30,
-        currentValue: 0,
-        unit: 'minutes',
-        completed: false,
-      },
-    ],
-
-    progress: {
-      routesCompleted: 0,
-      totalXpGained: 0,
-    },
-  };
-
-  ascenderWorkouts: Workout = {
-    exercises: [
-      {
-        name: '🧗🏼 Climbing session',
-        description: 'Focus on basic routes',
-        xpReward: 'XP + 50',
-        xpValue: 50,
-      },
-      {
-        name: 'Plank',
-        description: 'Hold for 30 seconds',
-        xpReward: 'XP + 40',
-        xpValue: 40,
-      },
-      {
-        name: 'Rest between attempts',
-        description: '',
-        xpReward: 'XP + 50',
-        xpValue: 50,
-      },
-      {
-        name: 'Different wall angles',
-        description: '',
-        xpReward: 'XP + 50',
-        xpValue: 50,
-      },
-    ],
-
-    achievements: [
-      {
-        name: '🦾 Grip strength',
-        description: 'Master your grip power',
-        progressDescription: 'Achievement progress: +50',
-        progress: 0,
-        xpReward: 50,
-        target: 30,
-        currentValue: 0,
-        unit: 'minutes',
-        completed: false,
-      },
-      {
-        name: '🧭 Route master',
-        description: 'Conquer different routes',
-        progressDescription: 'Achievement progress: +50',
-        progress: 0,
-        xpReward: 60,
-        target: 30,
-        currentValue: 0,
-        unit: 'minutes',
-        completed: false,
-      },
-      {
-        name: '🧩 Problem solver',
-        description: 'Find solutions for routes',
-        progressDescription: 'Achievement progress: +50',
-        progress: 0,
-        xpReward: 75,
-        target: 30,
-        currentValue: 0,
-        unit: 'minutes',
-        completed: false,
-      },
-      {
-        name: '⏱️ Speed climber',
-        description: 'Beat your previous times on familiar routes',
-        progressDescription: 'Achievement progress: +50',
-        progress: 0,
-        xpReward: 65,
-        target: 30,
-        currentValue: 0,
-        unit: 'minutes',
-        completed: false,
-      },
-      {
-        name: '🔄 Endurance expert',
-        description: 'Maintain climbing stamina for longer sessions',
-        progressDescription: 'Achievement progress + 50',
-        progress: 0,
-        xpReward: 80,
-        target: 30,
-        currentValue: 0,
-        unit: 'minutes',
-        completed: false,
-      },
-      {
-        name: '🧗 Dynamic mover',
-        description: 'Master dynamic movements and jumps',
-        progressDescription: 'Achievement progress: +50',
-        progress: 0,
-        xpReward: 70,
-        target: 30,
-        currentValue: 0,
-        unit: 'minutes',
-        completed: false,
-      },
-      {
-        name: '🦶 Footwork finesse',
-        description: 'Develop precise foot placement techniques',
-        progressDescription: 'Achievement progress: +50',
-        progress: 0,
-        xpReward: 55,
-        target: 30,
-        currentValue: 0,
-        unit: 'minutes',
-        completed: false,
-      },
-      {
-        name: '🌊 Flow state',
-        description: 'Climb with fluid, continuous movements',
-        progressDescription: 'Achievement progress: +50',
-        progress: 0,
-        xpReward: 90,
-        target: 30,
-        currentValue: 0,
-        unit: 'minutes',
-        completed: false,
-      },
-    ],
-
-    progress: {
-      routesCompleted: 0,
-      totalXpGained: 0,
-    },
-  };
-
-  zenWarriorWorkouts: Workout = {
-    exercises: [
-      {
-        name: '🧘‍♀️ Yoga session',
-        description: 'Begin with basic poses',
-        xpReward: 'XP + 50',
-        xpValue: 50,
-      },
-      {
-        name: 'Breathing exercise',
-        description: 'Focus on deep breathing for 2 minutes',
-        xpReward: 'XP + 40',
-        xpValue: 40,
-      },
-      {
-        name: 'Sun salutation sequence',
-        description: 'Complete 5 rounds',
-        xpReward: 'XP + 60',
-        xpValue: 60,
-      },
-      {
-        name: 'Meditation',
-        description: 'Quiet your mind for 5 minutes',
-        xpReward: 'XP + 50',
-        xpValue: 50,
-      },
-    ],
-
-    achievements: [
-      {
-        name: '✨ Perfect form',
-        description: 'Focus on alignment',
-        progressDescription: 'Achievement progress: +50',
-        progress: 0,
-        xpReward: 60,
-        target: 30,
-        currentValue: 0,
-        unit: 'minutes',
-        completed: false,
-      },
-      {
-        name: '🧘 Mind master',
-        description: 'Develop inner calm',
-        progressDescription: 'Achievement progress: +50',
-        progress: 0,
-        xpReward: 70,
-        target: 30,
-        currentValue: 0,
-        unit: 'minutes',
-        completed: false,
-      },
-      {
-        name: '🍃 Breath guide',
-        description: 'Control your breath',
-        progressDescription: 'Achievement progress: +50',
-        progress: 0,
-        xpReward: 55,
-        target: 30,
-        currentValue: 0,
-        unit: 'minutes',
-        completed: false,
-      },
-      {
-        name: '🌈 Flow sequence',
-        description: 'Master flowing between poses',
-        progressDescription: 'Achievement progress: +50',
-        progress: 0,
-        xpReward: 75,
-        target: 30,
-        currentValue: 0,
-        unit: 'minutes',
-        completed: false,
-      },
-      {
-        name: '🧠 Meditation adept',
-        description: 'Achieve deeper meditation states',
-        progressDescription: 'Achievement progress: +50',
-        progress: 0,
-        xpReward: 80,
-        target: 30,
-        currentValue: 0,
-        unit: 'minutes',
-        completed: false,
-      },
-      {
-        name: '🌙 Moonlight practice',
-        description: 'Complete evening yoga sessions',
-        progressDescription: 'Achievement progress: +50',
-        progress: 0,
-        xpReward: 65,
-        target: 30,
-        currentValue: 0,
-        unit: 'minutes',
-        completed: false,
-      },
-      {
-        name: '☀️ Morning ritual',
-        description: 'Establish a consistent morning routine',
-        progressDescription: 'Achievement progress: +50',
-        progress: 0,
-        xpReward: 70,
-        target: 30,
-        currentValue: 0,
-        unit: 'minutes',
-        completed: false,
-      },
-      {
-        name: '🔄 Balanced life',
-        description: 'Integrate yoga into daily life',
-        progressDescription: 'Achievement progress: +50',
-        progress: 0,
-        xpReward: 90,
-        target: 30,
-        currentValue: 0,
-        unit: 'minutes',
-        completed: false,
-      },
-    ],
-
-    progress: {
-      routesCompleted: 0,
-      totalXpGained: 0,
-    },
-  };
+  runnerWorkouts = runnerWorkouts;
+  ascenderWorkouts = ascenderWorkouts;
+  zenWarriorWorkouts = zenWarriorWorkouts;
 
   constructor(
     private router: Router,
     private characterService: CharacterService
   ) {}
 
+  // Обновленный метод ngOnInit с проверкой соответствия достижений классу
   ngOnInit() {
     // Загружаем выбранного персонажа из localStorage
     const savedCharacter = localStorage.getItem('selectedCharacter');
@@ -451,6 +83,11 @@ export class WorkoutComponent implements OnInit {
       this.workouts[0].exercises.forEach((exercise) => {
         this.completedExercises[exercise.name] = false;
       });
+
+      // ВАЖНОЕ ИЗМЕНЕНИЕ: Перед инициализацией completedAchievements
+      // фильтруем достижения персонажа, чтобы убедиться, что все они
+      // принадлежат текущему классу
+      this.filterAchievementsByCurrentClass();
 
       // Инициализируем completedAchievements и синхронизируем с персонажем
       this.workouts[0].achievements.forEach((achievement) => {
@@ -505,31 +142,53 @@ export class WorkoutComponent implements OnInit {
     } else {
       console.warn('No workouts loaded');
     }
+    setTimeout(() => {
+      this.debugAchievements();
+    }, 1000);
   }
 
-  // Метод для загрузки тренировок в зависимости от класса персонажа
   loadWorkoutsForCharacterClass() {
     if (!this.character) return;
 
-    console.log('Loading workouts for character:', this.character.name);
+    const className = this.character.name;
+    console.log('Загрузка тренировок для персонажа:', className);
 
-    switch (this.character.name) {
+    let selectedWorkout;
+    switch (className) {
       case 'Runner':
-        this.workouts = [this.runnerWorkouts];
-        console.log('Loaded Runner workouts');
+        selectedWorkout = this.runnerWorkouts;
         break;
       case 'Ascender':
-        this.workouts = [this.ascenderWorkouts];
-        console.log('Loaded Ascender workouts');
+        selectedWorkout = this.ascenderWorkouts;
         break;
       case 'Zen Warrior':
-        this.workouts = [this.zenWarriorWorkouts];
-        console.log('Loaded Zen Warrior workouts');
+        selectedWorkout = this.zenWarriorWorkouts;
         break;
       default:
-        // По умолчанию загружаем тренировки для бегуна
-        this.workouts = [this.runnerWorkouts];
-        console.warn('Unknown character class, defaulting to Runner workouts');
+        selectedWorkout = this.runnerWorkouts;
+        console.warn(
+          'Неизвестный класс персонажа, используем тренировки Runner по умолчанию'
+        );
+    }
+
+    this.workouts = [selectedWorkout];
+
+    console.log(`Загружены тренировки для ${className}`);
+    console.log(
+      `Количество достижений: ${selectedWorkout.achievements.length}`
+    );
+    console.log(
+      `Имена достижений: ${selectedWorkout.achievements
+        .map((a) => a.name)
+        .join(', ')}`
+    );
+
+    // Фильтрация достижений
+    this.filterAchievementsByCurrentClass();
+
+    // Включаем отладку только в dev режиме
+    if (process.env['NODE_ENV'] !== 'production') {
+      setTimeout(() => this.debugAchievements(), 500);
     }
   }
 
@@ -557,6 +216,22 @@ export class WorkoutComponent implements OnInit {
     return new Date(seconds * 1000).toISOString().slice(11, 19);
   }
 
+  private saveCharacterData() {
+    if (!this.character) return;
+
+    localStorage.setItem('selectedCharacter', JSON.stringify(this.character));
+    this.characterService.saveCharacter(this.character);
+  }
+
+  showNotification(message: string) {
+    this.notification = { show: true, message };
+
+    // Скрываем уведомление через 3 секунды
+    setTimeout(() => {
+      this.notification = { show: false, message: '' };
+    }, 3000);
+  }
+
   completeExercise(exercise: any, event: MouseEvent) {
     if (event) {
       event.preventDefault();
@@ -581,7 +256,177 @@ export class WorkoutComponent implements OnInit {
     }
   }
 
-  completeAchievement(achievement: any, event: MouseEvent) {
+  // Оптимизированный метод completeWorkout
+  completeWorkout() {
+    // Валидация входных данных
+    if (!this.validateWorkoutCompletion()) return;
+
+    try {
+      if (!this.character) {
+        this.showNotification('No character loaded!');
+        return;
+      }
+
+      // Обработка бонуса за все упражнения
+      this.processAllExercisesCompletionBonus();
+
+      // Обновление статистики персонажа
+      this.updateCharacterStats();
+
+      // Обновление достижений персонажа
+      this.updateCompletedAchievements();
+
+      // Сохранение данных и отправка на сервер
+      this.saveAndNavigate();
+    } catch (error) {
+      console.error('Error saving workout progress:', error);
+      this.showNotification('Error saving progress!');
+      this.stopTimer();
+      setTimeout(() => this.router.navigate(['/character-profile']), 1500);
+    }
+  }
+
+  // Вспомогательные методы для completeWorkout
+
+  private validateWorkoutCompletion(): boolean {
+    if (this.workouts.length === 0) {
+      this.showNotification('No workout loaded!');
+      return false;
+    }
+
+    const hasCompletedExercises = Object.values(this.completedExercises).some(
+      (completed) => completed
+    );
+    const hasCompletedAchievements = Object.values(
+      this.completedAchievements
+    ).some((completed) => completed);
+
+    if (!hasCompletedExercises && !hasCompletedAchievements) {
+      this.showNotification('Complete at least one exercise or achievement!');
+      return false;
+    }
+
+    return true;
+  }
+
+  private processAllExercisesCompletionBonus() {
+    const allExercisesCompleted = Object.values(this.completedExercises).every(
+      (completed) => completed
+    );
+    if (allExercisesCompleted) {
+      const bonusXP = Math.round(this.totalXpGained * 0.25);
+      this.totalXpGained += bonusXP;
+      this.workouts[0].progress.totalXpGained += bonusXP;
+      this.showNotification(
+        `Bonus for completing all exercises: +${bonusXP} XP!`
+      );
+    }
+  }
+
+  private updateCharacterStats() {
+    if (!this.character) return;
+
+    // Добавляем опыт персонажу
+    const levelInfo = this.characterService.addExperience(this.totalXpGained);
+
+    // Инициализируем stats, если необходимо
+    if (!this.character.stats) {
+      this.character.stats = { totalWorkouts: 0, totalXpGained: 0 };
+    }
+
+    // Обновляем счетчики
+    const currentWorkouts = this.character.stats.totalWorkouts || 0;
+    const currentXpGained = this.character.stats.totalXpGained || 0;
+    this.character.stats.totalWorkouts = currentWorkouts + 1;
+    this.character.stats.totalXpGained = currentXpGained + this.totalXpGained;
+
+    // Синхронизируем данные о прогрессе
+    const currentProgress = this.characterService.getCurrentProgress();
+    this.character.level = currentProgress.level;
+    this.character.xp = currentProgress.experience;
+    this.character.xpToNextLevel = currentProgress.experienceToNextLevel;
+
+    return levelInfo;
+  }
+
+  private updateCompletedAchievements() {
+    if (!this.character || !this.character.achievements) return;
+
+    // Создаем глубокую копию массива
+    const achievementsCopy = JSON.parse(
+      JSON.stringify(this.character.achievements)
+    );
+
+    // Обновляем достижения
+    Object.keys(this.completedAchievements).forEach((achievementName) => {
+      if (!this.completedAchievements[achievementName]) return;
+
+      const achievementIndex = achievementsCopy.findIndex(
+        (a: { name: string }) => a.name === achievementName
+      );
+
+      if (achievementIndex !== -1) {
+        // Обновляем существующее достижение
+        achievementsCopy[achievementIndex].completed = true;
+        achievementsCopy[achievementIndex].progress = 100;
+      } else {
+        // Добавляем новое достижение из тренировки
+        const workoutAchievement = this.workouts[0].achievements.find(
+          (a) => a.name === achievementName
+        );
+
+        if (workoutAchievement) {
+          achievementsCopy.push({
+            ...workoutAchievement,
+            progress: 100,
+            completed: true,
+          });
+        }
+      }
+    });
+
+    // Присваиваем обновленный массив
+    this.character.achievements = achievementsCopy;
+  }
+
+  private saveAndNavigate() {
+    if (!this.character) return;
+
+    // Сохраняем персонажа локально
+    this.saveCharacterData();
+
+    // Обновляем профиль в базе данных
+    const levelInfo = this.updateCharacterStats();
+
+    this.characterService
+      .updateProfile(this.character.name, this.character)
+      .subscribe({
+        next: (response) => {
+          console.log('Profile updated successfully:', response);
+          this.showNotification('Progress saved!');
+
+          // Уведомление о повышении уровня
+          if (levelInfo?.leveledUp) {
+            this.showNotification(
+              `Level Up! You are now level ${levelInfo.newLevel}!`
+            );
+          }
+
+          // Переход на страницу профиля
+          setTimeout(() => this.router.navigate(['/character-profile']), 1500);
+        },
+        error: (error) => {
+          console.error('Error updating profile:', error);
+          this.showNotification('Error saving progress!');
+          setTimeout(() => this.router.navigate(['/character-profile']), 1500);
+        },
+      });
+  }
+
+  completeAchievement(achievement: Achievement, event: MouseEvent) {
+    if (event) event.preventDefault();
+
+    // Проверки перед выполнением
     if (!this.isRunning) {
       this.showNotification('Start the timer first!');
       return;
@@ -594,207 +439,134 @@ export class WorkoutComponent implements OnInit {
       return;
     }
 
-    // Отмечаем достижение как выполненное в локальном объекте
+    if (!this.character) {
+      console.error('Character is undefined, cannot update achievements');
+      return;
+    }
+
+    // Отмечаем достижение как выполненное
     this.completedAchievements[achievement.name] = true;
 
-    // Добавляем опыт
+    // Обновляем счетчики
     const xpAmount = achievement.xpReward || 50;
     this.totalXpGained += xpAmount;
     this.workouts[0].progress.totalXpGained += xpAmount;
     this.routesCompleted++;
     this.workouts[0].progress.routesCompleted++;
 
-    // Проверяем существует ли персонаж и массив достижений
-    if (!this.character) {
-      console.error('Character is undefined, cannot update achievements');
-      this.showNotification(
-        `Achievement: ${achievement.name}! +${xpAmount} XP`
-      );
-      return;
-    }
+    // Обновляем достижение в объекте персонажа
+    this.updateCharacterAchievement(achievement);
+
+    // Сохраняем и показываем уведомление
+    this.saveCharacterData();
+    this.showNotification(`Achievement: ${achievement.name}! +${xpAmount} XP`);
+  }
+
+  private updateCharacterAchievement(achievement: Achievement) {
+    if (!this.character) return;
 
     // Инициализируем массив достижений, если он не существует
     if (!this.character.achievements) {
       this.character.achievements = [];
     }
 
-    // Обновляем достижение в объекте персонажа
     const characterAchievementIndex = this.character.achievements.findIndex(
-      (a: any) => a.name === achievement.name
+      (a) => a.name === achievement.name
     );
 
     if (characterAchievementIndex !== -1) {
-      console.log('Updating achievement in character:', achievement.name);
-      this.character.achievements[characterAchievementIndex].progress = 100; // Устанавливаем прогресс на 100%
-      this.character.achievements[characterAchievementIndex].completed = true; // Отмечаем как выполненное
-    } else {
-      console.log(
-        'Achievement not found in character object:',
-        achievement.name
-      );
+      // Обновляем существующее достижение
+      this.character.achievements[characterAchievementIndex].progress = 100;
+      this.character.achievements[characterAchievementIndex].completed = true;
 
-      // Добавляем достижение в список
+      if (achievement.currentValue !== undefined) {
+        this.character.achievements[characterAchievementIndex].currentValue =
+          achievement.currentValue;
+        this.character.achievements[characterAchievementIndex].current =
+          achievement.currentValue;
+      }
+    } else {
+      // Добавляем новое достижение
       this.character.achievements.push({
         ...achievement,
         progress: 100,
         completed: true,
       });
     }
-
-    // Обновляем в localStorage
-    localStorage.setItem('selectedCharacter', JSON.stringify(this.character));
-
-    // Также обновляем в сервисе
-    this.characterService.saveCharacter(this.character);
-
-    // Показываем уведомление
-    this.showNotification(`Achievement: ${achievement.name}! +${xpAmount} XP`);
   }
 
-  showNotification(message: string) {
-    this.notification = { show: true, message };
+  /**
+   * Проверяет, принадлежит ли достижение текущему классу персонажа
+   */
+  isAchievementForCurrentClass(achievementName: string): boolean {
+    if (!this.character) return false;
 
-    // Скрываем уведомление через 3 секунды
-    setTimeout(() => {
-      this.notification = { show: false, message: '' };
-    }, 3000);
+    // Получаем достижения текущей тренировки
+    const currentClassAchievements = this.workouts[0]?.achievements || [];
+
+    // Проверяем, есть ли достижение с таким именем в текущем классе
+    return currentClassAchievements.some((a) => a.name === achievementName);
   }
 
-  completeWorkout() {
-    if (this.workouts.length === 0) {
-      this.showNotification('No workout loaded!');
-      return;
-    }
+  filterAchievementsByCurrentClass() {
+    if (!this.character?.achievements || !this.workouts?.length) return;
 
-    const hasCompletedExercises = Object.values(this.completedExercises).some(
-      (completed) => completed
+    const currentClassAchievementNames = this.workouts[0].achievements.map(
+      (a) => a.name
     );
-    const hasCompletedAchievements = Object.values(
-      this.completedAchievements
-    ).some((completed) => completed);
+    const originalCount = this.character.achievements.length;
 
-    if (!hasCompletedExercises && !hasCompletedAchievements) {
-      this.showNotification('Complete at least one exercise or achievement!');
-      return;
-    }
-
-    const allExercisesCompleted = Object.values(this.completedExercises).every(
-      (completed) => completed
+    // Фильтруем достижения
+    this.character.achievements = this.character.achievements.filter(
+      (achievement) => currentClassAchievementNames.includes(achievement.name)
     );
-    if (allExercisesCompleted) {
-      const bonusXP = Math.round(this.totalXpGained * 0.25);
-      this.totalXpGained += bonusXP;
-      this.workouts[0].progress.totalXpGained += bonusXP;
-      this.showNotification(
-        `Bonus for completing all exercises: +${bonusXP} XP!`
-      );
-    }
 
-    try {
-      if (!this.character) {
-        this.showNotification('No character loaded!');
-        return;
-      }
-
-      // Добавляем опыт конкретному персонажу
-      const levelInfo = this.characterService.addExperience(this.totalXpGained);
-
-      // Обновляем данные персонажа
-      // Обновляем статистику тренировок - ВАЖНО: правильно инициализируем stats
-      if (!this.character.stats) {
-        this.character.stats = {
-          totalWorkouts: 0,
-          totalXpGained: 0,
-        };
-      }
-
-      // Инкрементируем счетчик тренировок и опыта
-      const currentWorkouts = this.character.stats.totalWorkouts || 0;
-      const currentXpGained = this.character.stats.totalXpGained || 0;
-
-      this.character.stats.totalWorkouts = currentWorkouts + 1;
-      this.character.stats.totalXpGained = currentXpGained + this.totalXpGained;
-
-      console.log('Updated character stats:', this.character.stats);
-
-      // Получаем текущий прогресс
-      const currentProgress = this.characterService.getCurrentProgress();
-
-      // Обновляем уровень и опыт персонажа
-      this.character.level = currentProgress.level;
-      this.character.xp = currentProgress.experience;
-      this.character.xpToNextLevel = currentProgress.experienceToNextLevel;
-
-      // Инициализируем массив достижений, если он не существует
-      if (!this.character.achievements) {
-        this.character.achievements = [];
-      }
-
-      // Проверяем достижения и обновляем их статус
-      Object.keys(this.completedAchievements).forEach((achievementName) => {
-        if (this.completedAchievements[achievementName] && this.character) {
-          const achievementIndex = this.character.achievements.findIndex(
-            (a: any) => a.name === achievementName
-          );
-
-          if (achievementIndex !== -1) {
-            console.log(`Marking achievement as completed: ${achievementName}`);
-            this.character.achievements[achievementIndex].completed = true;
-            this.character.achievements[achievementIndex].progress = 100;
-          }
-        }
-      });
-
+    const removedCount = originalCount - this.character.achievements.length;
+    if (removedCount > 0) {
       console.log(
-        'Saving updated character with achievements and stats:',
-        this.character
+        `Удалено ${removedCount} достижений, не принадлежащих классу ${this.character.name}`
       );
 
-      // Сохраняем персонажа локально
-      this.characterService.saveCharacter(this.character);
-
-      // Важно: используем localStorage для быстрого доступа в других компонентах
+      // Сохраняем обновленные данные
       localStorage.setItem('selectedCharacter', JSON.stringify(this.character));
-
-      // Обновляем профиль персонажа в базе данных
-      this.characterService
-        .updateProfile(this.character.name, this.character)
-        .subscribe({
-          next: (response) => {
-            console.log('Profile updated successfully:', response);
-            this.showNotification('Progress saved!');
-
-            // Показываем уведомление о повышении уровня
-            if (levelInfo && levelInfo.leveledUp) {
-              this.showNotification(
-                `Level Up! You are now level ${levelInfo.newLevel}!`
-              );
-            }
-
-            // Переходим на профиль персонажа
-            setTimeout(() => {
-              this.router.navigate(['/character-profile']);
-            }, 1500);
-          },
-          error: (error) => {
-            console.error('Error updating profile:', error);
-            this.showNotification('Error saving progress!');
-
-            // Даже в случае ошибки переходим на профиль персонажа
-            setTimeout(() => {
-              this.router.navigate(['/character-profile']);
-            }, 1500);
-          },
-        });
-    } catch (error) {
-      console.error('Error saving workout progress:', error);
-      this.showNotification('Error saving progress!');
-
-      this.stopTimer();
-
-      setTimeout(() => {
-        this.router.navigate(['/character-profile']);
-      }, 1500);
+      this.characterService.saveCharacter(this.character);
     }
+  }
+
+  debugAchievements() {
+    if (!this.character || !this.workouts || this.workouts.length === 0) {
+      console.error('Данные для отладки не готовы');
+      return;
+    }
+
+    console.log(
+      `[Отладка] Персонаж: ${this.character.name}, достижений: ${
+        this.character.achievements?.length || 0
+      }`
+    );
+
+    // Проверяем соответствие достижений текущему классу
+    if (this.character.achievements && this.character.achievements.length > 0) {
+      const currentClassAchievementNames = this.workouts[0].achievements.map(
+        (a) => a.name
+      );
+      const invalidAchievements = this.character.achievements.filter(
+        (a) => !currentClassAchievementNames.includes(a.name)
+      );
+
+      if (invalidAchievements.length > 0) {
+        console.warn(
+          'Найдены достижения, не принадлежащие текущему классу:',
+          invalidAchievements.map((a) => a.name).join(', ')
+        );
+      }
+    }
+
+    // Проверяем статус выполнения
+    const completedAchievementsCount =
+      this.character.achievements?.filter((a) => a.completed).length || 0;
+    console.log(
+      `[Отладка] Выполнено достижений: ${completedAchievementsCount}`
+    );
   }
 }
