@@ -46,11 +46,65 @@
 }
 
 /* Стили для карточки персонажа */
+/* Обновленные стили для карточки персонажа со скроллбаром */
 .character-card {
   background: rgba(8, 6, 9, 0.4);
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  max-height: 780px;
+  overflow-y: auto; /* Включаем вертикальную прокрутку */
+  overflow-x: hidden; /* Отключаем горизонтальную прокрутку */
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #ff944d rgba(8, 6, 9, 0.6); /* Firefox: цвет полосы и фона */
+}
+
+/* Стилизация скроллбара для Webkit браузеров (Chrome, Safari, новый Edge) */
+.character-card::-webkit-scrollbar {
+  width: 8px; /* Ширина скроллбара */
+}
+
+.character-card::-webkit-scrollbar-track {
+  background: rgba(8, 6, 9, 0.6); /* Фон скроллбара */
+  border-radius: 4px;
+}
+
+.character-card::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    135deg,
+    #ff944d,
+    #d16a7a
+  ); /* Градиент в стиле оранжевых элементов */
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.character-card::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    135deg,
+    #ffa066,
+    #e47a8a
+  ); /* Более светлый при наведении */
+}
+
+/* Стили для категорий достижений */
+.achievements-category {
+  margin-bottom: 20px;
+}
+
+.category-title {
+  font-size: 1.1rem;
+  color: #e0d6f5;
+  margin-bottom: 10px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Адаптация для мобильных устройств */
+@media (max-width: 768px) {
+  .character-card {
+    max-height: 400px; /* Меньшая высота для мобильных */
+  }
 }
 
 h2 {
