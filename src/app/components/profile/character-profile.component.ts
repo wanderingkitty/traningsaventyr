@@ -56,10 +56,8 @@ export class CharacterProfileComponent implements OnInit, OnDestroy {
           );
 
           if (this.character && this.characterProfile) {
-            // Обновляем данные в characterProfile.progress
             this.characterProfile.progress = { ...progress };
 
-            // Также обновляем данные в character и characterProfile.characterData для совместимости
             this.character.level = progress.level;
             this.character.xp = progress.experience;
             this.character.xpToNextLevel = progress.experienceToNextLevel;
