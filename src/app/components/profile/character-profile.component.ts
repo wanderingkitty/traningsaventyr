@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { CharacterService } from '../services/character.service';
 import { Observable, Subscription } from 'rxjs';
-import { User } from '../../../../backend/models/user';
+import { User } from '@backend/models/user';
 import { Character, CharacterProfile } from 'backend/models/character';
 
 @Component({
