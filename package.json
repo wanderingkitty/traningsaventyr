@@ -10,8 +10,8 @@
     "build:backend": "tsc -p tsconfig.backend.json",
     "watch": "ng build --watch --configuration development",
     "postinstall": "npm run build",
-    "homepage": "https://github.com/wanderingkitty/traningsaventyr.git",
-    "predeploy": "ng build --configuration production --base-href=/your-repo/",
+    "homepage": "https://wanderingkitty.github.io/traningsaventyr/",
+    "predeploy": "ng build --configuration production --base-href=/traningsaventyr/",
     "deploy": "gh-pages -d dist/traningsaventyr"
   },
   "private": true,
