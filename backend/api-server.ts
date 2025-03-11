@@ -10,14 +10,6 @@ dotenv.config();
 const app = express();
 const port = Number(process.env['PORT']) || 4444;
 
-app.use(
-  cors({
-    origin: 'http://localhost:4200',
-    methods: 'GET,POST,PUT,DELETE',
-    allowedHeaders: 'Content-Type,Authorization',
-  })
-);
-
 // Middleware
 app.use(express.json());
 

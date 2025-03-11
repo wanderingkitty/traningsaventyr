@@ -3,13 +3,16 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "node dist/backend/app-server.js",
+    "start": "node dist/backend/server.js",
     "dev": "ng serve",
     "dev:backend": "ts-node -P tsconfig.backend.json backend/api-server.ts",
     "build": "ng build && npm run build:backend",
     "build:backend": "tsc -p tsconfig.backend.json",
     "watch": "ng build --watch --configuration development",
-    "postinstall": "npm run build"
+    "postinstall": "npm run build",
+    "homepage": "https://github.com/wanderingkitty/traningsaventyr.git",
+    "predeploy": "ng build --configuration production --base-href=/your-repo/",
+    "deploy": "gh-pages -d dist/traningsaventyr"
   },
   "private": true,
   "dependencies": {
@@ -46,6 +49,7 @@
     "@types/jsonwebtoken": "^9.0.8",
     "@types/node": "^18.19.76",
     "esbuild": "^0.25.0",
+    "gh-pages": "^6.3.0",
     "jasmine-core": "~5.5.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",

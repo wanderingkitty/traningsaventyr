@@ -12,6 +12,6 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
-  "include": ["backend/**/*", "app-server.ts"],
+  "include": ["backend/**/*", "api-server.ts"],
   "exclude": ["node_modules"]
 }
