@@ -29,6 +29,14 @@ export const runnerWorkouts: Workout = {
     },
   ],
 
+  challenges: [
+    {
+      name: '🌪️ Fast Five Challenge',
+      description: 'Complete a 5km run',
+      progress: 0,
+      xpReward: 100,
+    },
+  ],
   achievements: [
     {
       name: '🗾 Distance goals',
@@ -154,6 +162,15 @@ export const ascenderWorkouts: Workout = {
     },
   ],
 
+  challenges: [
+    {
+      name: '🌄 Tackle a New Climbing Route',
+      description: 'Complete a new challange route',
+      progress: 0,
+      xpReward: 100,
+    },
+  ],
+
   achievements: [
     {
       name: '🦾 Grip strength',
@@ -276,6 +293,16 @@ export const zenWarriorWorkouts: Workout = {
       description: 'Quiet your mind for 5 minutes',
       xpReward: 'XP + 50',
       xpValue: 50,
+    },
+  ],
+
+  challenges: [
+    {
+      name: '🕊️ Quiet Mind',
+      description:
+        '48 hours without social media or digital devices, focusing on inner calmness',
+      progress: 0,
+      xpReward: 100,
     },
   ],
 

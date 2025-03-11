@@ -24,6 +24,7 @@ export class WorkoutComponent implements OnInit {
 
   completedExercises: { [key: string]: boolean } = {};
   completedAchievements: { [key: string]: boolean } = {};
+  completedChallenges: { [key: string]: boolean } = {};
 
   totalXpGained: number = 0;
   routesCompleted: number = 0;
@@ -122,6 +123,13 @@ export class WorkoutComponent implements OnInit {
         }
       });
 
+      // Initialize completedChallenges
+      if (this.workouts[0].challenges) {
+        this.workouts[0].challenges.forEach((challenge) => {
+          this.completedChallenges[challenge.name] = false;
+        });
+      }
+
       // Сохраняем персонажа после инициализации достижений
       if (this.character) {
         console.log(
@@ -147,6 +155,53 @@ export class WorkoutComponent implements OnInit {
     setTimeout(() => {
       this.debugAchievements();
     }, 1000);
+  }
+
+  completeChallenge(challenge: any, event: MouseEvent) {
+    if (event) {
+      event.preventDefault();
+    }
+
+    if (!this.isRunning) {
+      this.showNotification('Start the timer first!');
+      return;
+    }
+
+    if (!this.completedChallenges[challenge.name]) {
+      this.completedChallenges[challenge.name] = true;
+
+      const xpAmount = challenge.xpReward || 100;
+      this.totalXpGained += xpAmount;
+      this.workouts[0].progress.totalXpGained += xpAmount;
+
+      // Update character challenges
+      if (this.character && this.character.challenges) {
+        const challengeIndex = this.character.challenges.findIndex(
+          (c) => c.description === challenge.description
+        );
+
+        if (challengeIndex !== -1) {
+          this.character.challenges[challengeIndex].progress = 100;
+        } else {
+          this.character.challenges.push({
+            description: challenge.description,
+            progress: 100,
+            xpReward: challenge.xpReward,
+            name: '',
+          });
+        }
+
+        localStorage.setItem(
+          'selectedCharacter',
+          JSON.stringify(this.character)
+        );
+        this.characterService.saveCharacter(this.character);
+      }
+
+      this.showNotification(
+        `Challenge completed: ${challenge.name}! +${xpAmount} XP`
+      );
+    }
   }
 
   // Обновленный метод loadWorkoutsForCharacterClass с фильтрацией достижений
@@ -370,7 +425,9 @@ export class WorkoutComponent implements OnInit {
     ).some((completed) => completed);
 
     if (!hasCompletedExercises && !hasCompletedAchievements) {
-      this.showNotification('Complete at least one exercise or achievement!');
+      this.showNotification(
+        'Complete at least one exercise, challenge or achievement!'
+      );
       return;
     }
 

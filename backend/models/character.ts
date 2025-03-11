@@ -40,6 +40,7 @@ export interface Workout {
   exercises: Exercise[];
   achievements: Achievement[]; // Используем общий интерфейс Achievement
   progress: WorkoutProgress;
+  challenges: Challenge[];
 }
 
 export interface WorkoutStats {
@@ -63,6 +64,7 @@ export interface SpecialAbility {
 }
 
 export interface Challenge {
+  name: string;
   description: string;
   progress: number;
   xpReward?: number;

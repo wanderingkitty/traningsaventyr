@@ -39,6 +39,8 @@
             <li
               *ngFor="let challenge of selectedCharacter.challenges.slice(0, 3)"
             >
+              <p>{{ challenge.name }}:</p>
+
               {{ challenge.description }}
             </li>
           </ul>

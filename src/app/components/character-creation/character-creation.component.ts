@@ -91,45 +91,32 @@ export class CharacterCreationComponent implements OnInit {
           completed: false,
         },
       ],
+
       challenges: [
         {
-          description: 'Complete 5 climbing sessions',
+          name: '🌄 Tackle a New Climbing Route',
+          description: 'Complete a new challange route',
           progress: 0,
           xpReward: 100,
-        },
-        {
-          description: 'Reach a height of 10 meters',
-          progress: 0,
-          xpReward: 120,
-        },
-        {
-          description: 'Complete a challenging route without falling',
-          progress: 0,
-          xpReward: 150,
-        },
-        {
-          description: 'Train climbing 3 days in a row',
-          progress: 0,
-          xpReward: 130,
         },
       ],
       specialAbilities: [
         {
           name: '🏔 Peak power',
-          unlockedAtLevel: 5,
-          requiredLevel: 5,
+          unlockedAtLevel: 2,
+          requiredLevel: 2,
           unlocked: false,
         },
         {
           name: '🪨 Rock master',
-          unlockedAtLevel: 10,
-          requiredLevel: 10,
+          unlockedAtLevel: 4,
+          requiredLevel: 4,
           unlocked: false,
         },
         {
           name: '🕷️ Spider grip',
-          unlockedAtLevel: 15,
-          requiredLevel: 15,
+          unlockedAtLevel: 5,
+          requiredLevel: 5,
           unlocked: false,
         },
       ],
@@ -206,43 +193,29 @@ export class CharacterCreationComponent implements OnInit {
       ],
       challenges: [
         {
-          description: 'Run 3 different routes',
-          progress: 0,
-          xpReward: 80,
-        },
-        {
+          name: '🌪️ Fast Five Challenge',
           description: 'Complete a 5km run',
           progress: 0,
           xpReward: 100,
-        },
-        {
-          description: 'Maintain target heart rate for 20 minutes',
-          progress: 0,
-          xpReward: 120,
-        },
-        {
-          description: 'Run every morning for a week',
-          progress: 0,
-          xpReward: 150,
         },
       ],
       specialAbilities: [
         {
           name: '⚡ Speed burst',
+          unlockedAtLevel: 2,
+          requiredLevel: 2,
+          unlocked: false,
+        },
+        {
+          name: '🔋 Marathon mind',
           unlockedAtLevel: 5,
           requiredLevel: 5,
           unlocked: false,
         },
         {
-          name: '🔋 Marathon mind',
-          unlockedAtLevel: 10,
-          requiredLevel: 10,
-          unlocked: false,
-        },
-        {
           name: '💨 Recovery master',
-          unlockedAtLevel: 10,
-          requiredLevel: 10,
+          unlockedAtLevel: 4,
+          requiredLevel: 4,
           unlocked: false,
         },
       ],
@@ -319,43 +292,30 @@ export class CharacterCreationComponent implements OnInit {
       ],
       challenges: [
         {
-          description: 'Hold a pose for 1 min',
+          name: '🕊️ Quiet Mind',
+          description:
+            '48 hours without social media or digital devices, focusing on inner calmness',
           progress: 0,
-          xpReward: 70,
-        },
-        {
-          description: 'Complete a full sun salutation sequence',
-          progress: 0,
-          xpReward: 90,
-        },
-        {
-          description: 'Meditate for 10 minutes daily for a week',
-          progress: 0,
-          xpReward: 120,
-        },
-        {
-          description: 'Master three advanced poses',
-          progress: 0,
-          xpReward: 130,
+          xpReward: 100,
         },
       ],
       specialAbilities: [
         {
           name: '☯️ Balance sage',
-          unlockedAtLevel: 5,
-          requiredLevel: 5,
+          unlockedAtLevel: 2,
+          requiredLevel: 2,
           unlocked: false,
         },
         {
           name: '🌸 Inner peace',
-          unlockedAtLevel: 10,
-          requiredLevel: 10,
+          unlockedAtLevel: 3,
+          requiredLevel: 3,
           unlocked: false,
         },
         {
           name: '🌊 Breath guide',
-          unlockedAtLevel: 10,
-          requiredLevel: 10,
+          unlockedAtLevel: 4,
+          requiredLevel: 4,
           unlocked: false,
         },
       ],

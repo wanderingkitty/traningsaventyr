@@ -39,8 +39,8 @@
         ></div>
       </div>
       <div class="xp-text">
-        {{ characterProfile.progress?.experience || 0 }} /
-        {{ characterProfile.progress?.experienceToNextLevel || 1000 }} XP
+        <p>Level progress</p>
+        {{ getCurrentExp() }} / {{ getExpToNextLevel() }} XP
       </div>
     </div>
 
@@ -51,12 +51,6 @@
           characterProfile.characterData.stats?.totalWorkouts || 0
         }}</span>
         <span class="stat-label">Workouts</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-value">{{
-          characterProfile.characterData.stats?.totalXpGained || 0
-        }}</span>
-        <span class="stat-label">Total class XP</span>
       </div>
     </div>
 
@@ -114,19 +108,16 @@
     >
       <div *ngFor="let challenge of characterProfile.characterData.challenges">
         <div class="challenge-container">
-          <p>{{ challenge.description }}</p>
+          <p>{{ challenge.name }}</p>
+          <p class="achievement-description">{{ challenge.description }}</p>
+
           <span class="challenge-xp" *ngIf="challenge.xpReward">
             +{{ challenge.xpReward }} XP
           </span>
-          <div class="progress-bar">
-            <div
-              class="progress-bar-inner"
-              [style.width.%]="challenge.progress || 0"
-            ></div>
-          </div>
         </div>
       </div>
     </div>
+
     <div
       class="card abilities-card"
       *ngIf="
@@ -138,7 +129,7 @@
       <div
         *ngFor="let ability of characterProfile.characterData.specialAbilities"
       >
-        <span class="ability-name">{{ ability.name || "Ability" }}</span>
+        <span class="ability-name">{{ ability.name }}</span>
         <div class="progress-bar">
           <div
             class="progress-bar-inner"
@@ -147,12 +138,15 @@
         </div>
         <div class="ability-status" *ngIf="!ability.unlocked">
           <span class="locked">LOCKED</span>
-          <span class="ability-req" *ngIf="ability.requiredLevel">
+          <span class="ability-req">
             Unlocks at Level {{ ability.requiredLevel }}
           </span>
         </div>
       </div>
     </div>
+
+    <h3>🏅 Rewards</h3>
+    <div class="rewards-container"></div>
 
     <h3>🔼 Next Level</h3>
     <div class="next-level-container">
@@ -162,10 +156,7 @@
       <div class="next-level-info">
         <p>
           Collect
-          <strong>{{
-            (characterProfile.progress.experienceToNextLevel || 1000) -
-              (characterProfile.progress.experience || 0)
-          }}</strong>
+          <strong>{{ getRemainingExp() }}</strong>
           more XP to level up!
         </p>
         <p>
@@ -177,23 +168,23 @@
         </p>
       </div>
     </div>
+
+    <div class="action-buttons">
+      <button class="btn btn-primary" (click)="startWorkout()">
+        Start Workout
+      </button>
+      <button class="btn btn-secondary" (click)="goBack()">
+        Choose another class
+      </button>
+    </div>
   </div>
 
-  <div class="action-buttons">
-    <button class="btn btn-primary" (click)="startWorkout()">
-      Start Workout
-    </button>
-    <button class="btn btn-secondary" (click)="goBack()">
-      Choose another class
-    </button>
-  </div>
-</div>
-
-<div *ngIf="!characterProfile" class="character-profile loading">
-  <div class="header">
-    <h1 class="profile-title">Loading character profile...</h1>
-  </div>
-  <div class="loading-message">
-    Please wait while your character data is loading...
+  <div *ngIf="!characterProfile" class="character-profile loading">
+    <div class="header">
+      <h1 class="profile-title">Loading character profile...</h1>
+    </div>
+    <div class="loading-message">
+      Please wait while your character data is loading...
+    </div>
   </div>
 </div>

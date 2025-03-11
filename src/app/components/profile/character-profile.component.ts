@@ -19,6 +19,7 @@ export class CharacterProfileComponent implements OnInit, OnDestroy {
   characterProfile?: CharacterProfile;
   user$: Observable<User>;
   progressSubscription: Subscription = new Subscription();
+  Math = Math;
 
   constructor(
     private router: Router,
@@ -70,6 +71,9 @@ export class CharacterProfileComponent implements OnInit, OnDestroy {
                 progress.experienceToNextLevel;
             }
 
+            // ВАЖНО: Обновляем специальные способности при изменении уровня
+            this.updateSpecialAbilities();
+
             console.log(
               'Updated character profile for',
               this.character.name,
@@ -101,6 +105,23 @@ export class CharacterProfileComponent implements OnInit, OnDestroy {
     if (this.progressSubscription) {
       this.progressSubscription.unsubscribe();
     }
+  }
+
+  getCurrentExp(): number {
+    return Math.floor(this.characterProfile?.progress?.experience || 0);
+  }
+
+  getExpToNextLevel(): number {
+    return Math.floor(
+      this.characterProfile?.progress?.experienceToNextLevel || 1000
+    );
+  }
+
+  getRemainingExp(): number {
+    const current = this.characterProfile?.progress?.experience || 0;
+    const needed =
+      this.characterProfile?.progress?.experienceToNextLevel || 1000;
+    return Math.ceil(needed - current);
   }
 
   // Загрузка персонажа из localStorage
@@ -176,6 +197,9 @@ export class CharacterProfileComponent implements OnInit, OnDestroy {
         if (!profile || !profile.characterData) {
           console.warn('No profile data received from server');
           return;
+        }
+        if (this.character) {
+          this.updateSpecialAbilities();
         }
 
         if (profile.characterData.name !== this.character?.name) {
@@ -254,6 +278,65 @@ export class CharacterProfileComponent implements OnInit, OnDestroy {
         console.error('Error loading user profile:', error);
       },
     });
+  }
+
+  updateSpecialAbilities() {
+    if (this.character?.specialAbilities) {
+      // Simply map the abilities based on current level
+      this.character.specialAbilities = this.character.specialAbilities.map(
+        (ability) => ({
+          ...ability,
+          // Use the level from characterProfile to ensure consistency
+          unlocked:
+            (this.characterProfile?.progress?.level ?? 1) >=
+            (ability.requiredLevel ?? ability.unlockedAtLevel ?? Infinity),
+        })
+      );
+
+      // Optional: Save the updated character
+      this.characterService.saveCharacter(this.character);
+    }
+  }
+
+  checkAndUpdateAbilities() {
+    if (this.character) {
+      // Ensure abilities are updated when level changes
+      this.updateSpecialAbilities();
+
+      // Log for debugging
+      console.log(
+        'Abilities after update:',
+        this.character.specialAbilities.map(
+          (a) => `${a.name}: ${a.unlocked ? 'Unlocked' : 'Locked'}`
+        )
+      );
+    }
+  }
+
+  // Method to get next unlockable ability
+  getNextAbilityDescription(): string | null {
+    if (!this.character?.specialAbilities?.length) return null;
+
+    const nextAbility = this.character.specialAbilities.find(
+      (ability) =>
+        !ability.unlocked &&
+        (this.character?.level ?? 1) >=
+          (ability.requiredLevel ?? ability.unlockedAtLevel ?? Infinity)
+    );
+
+    return nextAbility
+      ? `Next ability '${nextAbility.name}' unlocks at level ${
+          nextAbility.requiredLevel ?? nextAbility.unlockedAtLevel
+        }`
+      : null;
+  }
+
+  // Method to get unlocked abilities
+  getUnlockedAbilities() {
+    return (
+      this.character?.specialAbilities?.filter((ability) => ability.unlocked) ??
+      []
+    );
   }
 
   // Метод для нормализации достижений

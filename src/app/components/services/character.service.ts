@@ -182,7 +182,6 @@ export class CharacterService {
 
   createProfile(character: Character) {
     console.log('Creating profile with character data:', character);
-    console.log('Number of achievements:', character.achievements?.length);
     const currentUser = this.authService.getCurrentUser();
 
     if (!currentUser) {
@@ -194,20 +193,27 @@ export class CharacterService {
       character.avatar = this.getDefaultAvatarForClass(character.name);
     }
 
-    // Получаем текущий прогресс
-    const currentProgress = this.characterProgressSubject.value;
+    // EXPLICITLY set to level 1 and reset experience
+    const initialProgress = {
+      level: 1,
+      experience: 0,
+      experienceToNextLevel: this.baseXpRequirement,
+    };
 
-    // Синхронизируем данные о прогрессе с персонажем
-    character.level = currentProgress.level;
-    character.xp = currentProgress.experience;
-    character.xpToNextLevel = currentProgress.experienceToNextLevel;
+    // Sync character data with initial progress
+    character.level = 1;
+    character.xp = 0;
+    character.xpToNextLevel = this.baseXpRequirement;
+
+    // Update the progress subject to ensure it starts at level 1
+    this.characterProgressSubject.next(initialProgress);
 
     const profileData = {
       userId: currentUser.userId || currentUser.name,
       username: currentUser.name,
       selectedCharacterName: character.name,
       characterData: character,
-      progress: currentProgress,
+      progress: initialProgress,
     };
 
     console.log('Creating profile with data:', profileData);
@@ -354,9 +360,23 @@ export class CharacterService {
       );
       if (savedProgress) {
         try {
-          this.characterProgressSubject.next(JSON.parse(savedProgress));
+          const parsedProgress = JSON.parse(savedProgress);
+          // Ensure level is at least 1
+          parsedProgress.level = Math.max(1, parsedProgress.level || 1);
+          parsedProgress.experience = Math.max(
+            0,
+            parsedProgress.experience || 0
+          );
+
+          this.characterProgressSubject.next(parsedProgress);
         } catch (error) {
           console.error('Error parsing saved progress:', error);
+          // Reset to default if parsing fails
+          this.characterProgressSubject.next({
+            level: 1,
+            experience: 0,
+            experienceToNextLevel: this.baseXpRequirement,
+          });
         }
       }
     }

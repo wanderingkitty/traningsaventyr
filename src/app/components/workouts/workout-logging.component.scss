@@ -12,6 +12,7 @@
   overflow: hidden;
   position: relative; /* Добавьте это */
   top: 0;
+  padding-bottom: 150px;
 }
 
 .headers {
@@ -33,7 +34,7 @@
   width: 100%; /* Ensure full width */
   z-index: 100;
   margin: 0; /* Remove the margins */
-  height: 140px;
+  height: 150px;
   overflow: hidden;
 
   &::before {
@@ -300,30 +301,33 @@ h2 {
 
 .buttons {
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
   gap: 15px;
-  padding: 20px 15px;
-  margin-top: 55px;
-  position: sticky;
-  bottom: 0;
-
-  z-index: 10;
+  width: 100%;
+  max-width: 500px;
+  position: relative;
+  z-index: 90;
+  margin-top: 6px;
 }
 
 .workout-btn {
   font-family: "Fira Sans", sans-serif;
   font-weight: 600;
-  font-size: 1em;
+  font-size: 0.7em;
   cursor: pointer;
   border-radius: 10px;
   border: 2px solid rgba(180, 140, 255, 0.4);
-  padding: 7px 14px;
+  padding: 8px 14px;
   background: linear-gradient(135deg, #3b2b4e, #5a3f76);
   color: #e0d6f5;
   transition: all 0.3s ease;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  min-width: 120px;
+  min-width: 100px;
+  text-align: center;
+  display: inline-block !important; /* Гарантирует отображение */
+  opacity: 1 !important; /* Гарантирует видимость */
+  visibility: visible !important; /* Гарантирует видимость */
 
   &:hover:not(:disabled) {
     transform: translateY(-2px);
@@ -602,4 +606,47 @@ h2 {
     padding: 10px 15px;
     font-size: 0.9rem;
   }
+}
+
+@media (max-width: 768px) {
+  .buttons {
+    flex-direction: row; /* Кнопки в ряд */
+    flex-wrap: wrap; /* Позволяет переносить на новую строку */
+    gap: 10px;
+    margin-bottom: 140px; /* Отступ от нижнего fixed элемента */
+  }
+
+  .workout-btn {
+    flex: 1; /* Равномерно распределяем доступное пространство */
+    min-width: 0; /* Убираем ограничение минимальной ширины */
+    max-width: calc(
+      33% - 10px
+    ); /* Максимально занимает треть доступного места */
+    padding: 8px 12px;
+    font-size: 0.9em;
+  }
+}
+
+/* Исправления для маленьких экранов */
+@media (max-width: 480px) {
+  .buttons {
+    padding: 10px 5px;
+    gap: 8px;
+  }
+
+  .workout-btn {
+    padding: 8px 10px;
+    font-size: 0.85em;
+    max-width: none; /* Снимаем ограничение максимальной ширины */
+    min-width: 0;
+  }
+}
+
+/* Дополнительные стили для гарантии видимости на всех экранах */
+.workout-btn:nth-child(1),
+.workout-btn:nth-child(2),
+.workout-btn:nth-child(3) {
+  display: inline-flex !important;
+  justify-content: center;
+  align-items: center;
 }
