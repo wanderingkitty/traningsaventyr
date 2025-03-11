@@ -27,7 +27,7 @@ export class CharacterCreationComponent implements OnInit {
       level: 1,
       xp: 0,
       xpToNextLevel: 1000,
-      avatar: '/assets/ascender-img.jpg',
+      avatar: './assets/ascender-img.jpg',
       class: 'Climber',
       stats: {
         totalWorkouts: 0,
@@ -127,7 +127,7 @@ export class CharacterCreationComponent implements OnInit {
       level: 1,
       xp: 0,
       xpToNextLevel: 1000,
-      avatar: '/assets/running-avatar.jpg',
+      avatar: './assets/running-avatar.jpg',
       class: 'Runner',
       stats: {
         totalWorkouts: 0,
@@ -226,7 +226,7 @@ export class CharacterCreationComponent implements OnInit {
       level: 1,
       xp: 0,
       xpToNextLevel: 1000,
-      avatar: '/assets/yoga-avatar.jpg',
+      avatar: './assets/yoga-avatar.jpg',
       class: 'Yogi',
       stats: {
         totalWorkouts: 0,

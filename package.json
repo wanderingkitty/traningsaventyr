@@ -1,16 +1,16 @@
 {
   "name": "traningsaventyr",
   "version": "0.0.0",
+  "homepage": "https://wanderingkitty.github.io/traningsaventyr/",
   "scripts": {
     "ng": "ng",
     "start": "node dist/backend/server.js",
     "dev": "ng serve",
     "dev:backend": "ts-node -P tsconfig.backend.json backend/api-server.ts",
-    "build": "ng build && npm run build:backend",
+    "build": "ng build",
     "build:backend": "tsc -p tsconfig.backend.json",
     "watch": "ng build --watch --configuration development",
     "postinstall": "npm run build",
-    "homepage": "https://wanderingkitty.github.io/traningsaventyr/",
     "predeploy": "ng build --configuration production --base-href=/traningsaventyr/",
     "deploy": "gh-pages -d dist/traningsaventyr"
   },
