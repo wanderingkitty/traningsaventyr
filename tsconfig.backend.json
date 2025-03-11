@@ -3,7 +3,7 @@
     "target": "ES2022",
     "module": "CommonJS",
     "outDir": "./dist/backend",
-    "rootDir": "./backend",
+    "rootDir": ".",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -12,6 +12,6 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
-  "include": ["backend/**/*"],
+  "include": ["backend/**/*", "app-server.ts"],
   "exclude": ["node_modules"]
 }

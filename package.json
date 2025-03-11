@@ -2,11 +2,14 @@
   "name": "traningsaventyr",
   "version": "0.0.0",
   "scripts": {
-    "start": "ng serve",
-    "start:backend": "ts-node -P tsconfig.backend.json backend/api-server.ts",
-    "build": "ng build",
+    "ng": "ng",
+    "start": "node dist/backend/app-server.js",
+    "dev": "ng serve",
+    "dev:backend": "ts-node -P tsconfig.backend.json backend/api-server.ts",
+    "build": "ng build && npm run build:backend",
     "build:backend": "tsc -p tsconfig.backend.json",
-    "watch": "ng build --watch --configuration development"
+    "watch": "ng build --watch --configuration development",
+    "postinstall": "npm run build"
   },
   "private": true,
   "dependencies": {
@@ -19,7 +22,7 @@
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
-    "express": "^4.18.2",
+    "express": "^4.21.2",
     "json-schema-traverse": "^1.0.0",
     "jsonwebtoken": "^9.0.2",
     "methods": "^1.1.2",
